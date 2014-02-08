@@ -1,0 +1,25 @@
+/*
+	pluginDraft CSS styles
+*/
+
+.pluginDraft {	
+}
+
+.pluginDraftError {
+	display: table;
+	margin: 2px 0;
+	border: 1px solid #f66;
+	background-color: #fee;
+}
+.pluginDraftError div {
+	display: table-cell;
+	padding: 2px 6px;
+	color: white;
+	background-color: #f66;
+	height: inherit;
+}
+.pluginDraftError span {
+	display: table-cell;
+	padding: 2px 4px;
+	color: #f66;
+}
