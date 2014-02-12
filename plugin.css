@@ -1,24 +1,24 @@
 /*
-	pluginDraft CSS styles
+	FileInfo CSS styles
 */
 
-.pluginDraft {	
+.fileInfo {	
 }
 
-.pluginDraftError {
+.fileInfoError {
 	display: table;
 	margin: 2px 0;
 	border: 1px solid #f66;
 	background-color: #fee;
 }
-.pluginDraftError div {
+.fileInfoError div {
 	display: table-cell;
 	padding: 2px 6px;
 	color: white;
 	background-color: #f66;
 	height: inherit;
 }
-.pluginDraftError span {
+.fileInfoError span {
 	display: table-cell;
 	padding: 2px 4px;
 	color: #f66;
