@@ -1,2 +1,4 @@
-error		= Fehler
-error_sth 	= ...
+error 			    = Fehler
+error_invalid_input = Inkorrekte Eingabe: "{PARAM1}" folgt nicht dem Schema "Kategorie:Dateiname"
+error_invalid_file  = Eine Datei mit dem Dateinamen "{PARAM1}" existiert nicht in der Kategorie "{PARAM2}"
+error_invalid_type  = Ein Typ "{PARAM1}" existiert nicht. Erlaubte Typen sind: ...

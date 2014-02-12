@@ -2,23 +2,23 @@
 	FileInfo CSS styles
 */
 
-.fileInfo {	
+.FileInfo {	
 }
 
-.fileInfoError {
+.FileInfoError {
 	display: table;
 	margin: 2px 0;
 	border: 1px solid #f66;
 	background-color: #fee;
 }
-.fileInfoError div {
+.FileInfoError div {
 	display: table-cell;
 	padding: 2px 6px;
 	color: white;
 	background-color: #f66;
 	height: inherit;
 }
-.fileInfoError span {
+.FileInfoError span {
 	display: table-cell;
 	padding: 2px 4px;
 	color: #f66;

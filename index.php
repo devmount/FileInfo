@@ -3,7 +3,8 @@
 /**
  * moziloCMS Plugin: FileInfo
  *
- * Does something awesome!
+ * Reads special file information like type, size
+ * Counts number of downloads for each file
  *
  * PHP version 5
  *
@@ -50,7 +51,7 @@ class FileInfo extends Plugin
     const PLUGIN_VERSION = 'v0.x.jjjj-mm-dd';
     const MOZILO_VERSION = '2.0';
     private $_plugin_tags = array(
-        'tag1' => '{FileInfo|type|<param1>|<param2>}',
+        'tag1' => '{FileInfo|<file>|<attribute>}',
     );
 
     const LOGO_URL = 'http://media.devmount.de/logo_pluginconf.png';
@@ -118,6 +119,7 @@ class FileInfo extends Plugin
     {
         global $CMS_CONF;
         global $syntax;
+        global $CatPage;
 
         $this->_cms_lang = new Language(
             $this->PLUGIN_SELF_DIR
@@ -127,11 +129,12 @@ class FileInfo extends Plugin
         );
 
         // get language labels
-        $label = $this->_cms_lang->getLanguageValue('label');
+        // $label = $this->_cms_lang->getLanguageValue('label');
 
         // get params
-        list($param_, $param_, $param_)
-            = $this->makeUserParaArray($value, false, "|");
+        list($param_file, $param_type)
+            = $this->makeUserParaArray($value, false, '|');
+        // $param_file = urldecode($param_file);
 
         // get conf and set default
         $conf = array();
@@ -144,18 +147,60 @@ class FileInfo extends Plugin
             );
         }
 
-        // include jquery and FileInfo javascript
-        $syntax->insert_jquery_in_head('jquery');
-        $syntax->insert_in_head(
-            '<script type="text/javascript" src="'
-            . $this->PLUGIN_SELF_URL
-            . 'js/FileInfo.js"></script>'
-        );
+        // check if cat:file construct is correct
+        if (!strpos($param_file, '%3A')) {
+            return $this->throwError(
+                $this->_cms_lang->getLanguageValue(
+                    'error_invalid_input',
+                    urldecode($param_file)
+                )
+            );
+        }
+
+        // get category and file name
+        list($cat, $file) = explode('%3A', $param_file);
+
+        // check if file exists
+        if (!$CatPage->exists_File($cat, $file)) {
+            return $this->throwError(
+                $this->_cms_lang->getLanguageValue(
+                    'error_invalid_file',
+                    urldecode($file),
+                    urldecode($cat)
+                )
+            );
+        }
 
         // initialize return content, begin plugin content
         $content = '<!-- BEGIN ' . self::PLUGIN_TITLE . ' plugin content --> ';
         
-        // do something awesome here! ...
+        // handle different types
+        switch ($param_type) {
+        // returns a download link to the given file (necessary for counting)
+        case 'link':
+            $url = ''; // TODO
+            $content .= '<a href ="' . $url . '">' . urldecode($file) . '</a>';
+            break;
+        
+        // returns filetype
+        case 'type':
+            $content .= $CatPage->get_FileType($file);
+            break;
+        
+        // returns filesize
+        case 'size':
+            $content .= ''; // TODO
+            break;
+        
+        default:
+            return $this->throwError(
+                $this->_cms_lang->getLanguageValue(
+                    'error_invalid_type',
+                    $param_type
+                )
+            );
+            break;
+        }
 
         // end plugin content
         $content .= '<!-- END ' . self::PLUGIN_TITLE . ' plugin content --> ';
