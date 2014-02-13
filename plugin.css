@@ -8,18 +8,18 @@
 .FileInfoError {
 	display: table;
 	margin: 2px 0;
-	border: 1px solid #f66;
+	border: 1px solid #f44;
 	background-color: #fee;
 }
 .FileInfoError div {
 	display: table-cell;
 	padding: 2px 6px;
 	color: white;
-	background-color: #f66;
+	background-color: #f44;
 	height: inherit;
 }
 .FileInfoError span {
 	display: table-cell;
 	padding: 2px 4px;
-	color: #f66;
+	color: #f44;
 }

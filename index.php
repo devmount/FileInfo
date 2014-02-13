@@ -134,7 +134,6 @@ class FileInfo extends Plugin
         // get params
         list($param_file, $param_type)
             = $this->makeUserParaArray($value, false, '|');
-        // $param_file = urldecode($param_file);
 
         // get conf and set default
         $conf = array();
@@ -170,6 +169,11 @@ class FileInfo extends Plugin
                 )
             );
         }
+        
+        // get file source url
+        $src = $CatPage->get_srcFile($cat, $file);
+        // get file source path
+        $url = $CatPage->get_pfadFile($cat, $file);
 
         // initialize return content, begin plugin content
         $content = '<!-- BEGIN ' . self::PLUGIN_TITLE . ' plugin content --> ';
@@ -178,8 +182,7 @@ class FileInfo extends Plugin
         switch ($param_type) {
         // returns a download link to the given file (necessary for counting)
         case 'link':
-            $url = ''; // TODO
-            $content .= '<a href ="' . $url . '">' . urldecode($file) . '</a>';
+            $content .= '<a href ="' . $src . '">' . urldecode($file) . '</a>';
             break;
         
         // returns filetype
@@ -189,7 +192,7 @@ class FileInfo extends Plugin
         
         // returns filesize
         case 'size':
-            $content .= ''; // TODO
+            $content .= $this->formatFilesize(filesize($url));
             break;
         
         default:
@@ -592,6 +595,23 @@ class FileInfo extends Plugin
             . '<div>' . $this->_cms_lang->getLanguageValue('error') . '</div>'
             . '<span>' . $text. '</span>'
             . '</div>';
+    }
+
+    /**
+     * returns filesize with unit, like 5,32 M
+     * 
+     * @param integer $bytes    number of bytes
+     * @param integer $decimals number of decimals
+     * 
+     * @return string formatted filesize
+     */
+    protected function formatFilesize($bytes, $decimals = 2)
+    {
+        // $sz = 'BKMGTP';
+        $sz = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
+        $factor = floor((strlen($bytes) - 1) / 3);
+        return 
+            sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . @$sz[$factor];
     }
 
 }
