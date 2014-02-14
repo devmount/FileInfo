@@ -172,7 +172,7 @@ class FileInfo extends Plugin
         
         // get file source url
         $src = $CatPage->get_srcFile($cat, $file);
-        // get file source path
+        // get file path url
         $url = $CatPage->get_pfadFile($cat, $file);
 
         // initialize return content, begin plugin content
@@ -182,7 +182,20 @@ class FileInfo extends Plugin
         switch ($param_type) {
         // returns a download link to the given file (necessary for counting)
         case 'link':
-            $content .= '<a href ="' . $src . '">' . urldecode($file) . '</a>';
+            // $content .= '<a href="' . $src . '">' . urldecode($file) . '</a>';
+            $content
+                .= '<form 
+                        class="FileInfoDownload"
+                        action="' . $this->PLUGIN_SELF_URL . 'download.php"
+                    >';
+            $content .= '<input name="url" type="hidden" value="' . $url . '" />';
+            $content
+                .= '<input
+                        name="submit"
+                        type="submit"
+                        value="' . urldecode($file) . '"
+                    />';
+            $content .= '</form>';
             break;
         
         // returns filetype
