@@ -28,6 +28,8 @@ if (!defined('IS_CMS')) {
     die();
 }
 
+require_once "database.php";
+
 /**
  * FileInfo Class
  *
@@ -55,11 +57,11 @@ class FileInfo extends Plugin
     );
 
     const LOGO_URL = 'http://media.devmount.de/logo_pluginconf.png';
-    
+
     /**
      * set configuration elements, their default values and their configuration
      * parameters
-     * 
+     *
      * @var array $_confdefault
      *      text     => default, type, maxlength, size, regex
      *      textarea => default, type, cols, rows, regex
@@ -110,9 +112,9 @@ class FileInfo extends Plugin
 
     /**
      * creates plugin content
-     * 
+     *
      * @param string $value Parameter divided by '|'
-     * 
+     *
      * @return string HTML output
      */
     function getContent($value)
@@ -169,7 +171,7 @@ class FileInfo extends Plugin
                 )
             );
         }
-        
+
         // get file source url
         $src = $CatPage->get_srcFile($cat, $file);
         // get file path url
@@ -177,18 +179,20 @@ class FileInfo extends Plugin
 
         // initialize return content, begin plugin content
         $content = '<!-- BEGIN ' . self::PLUGIN_TITLE . ' plugin content --> ';
-        
+
         // handle different types
         switch ($param_type) {
         // returns a download link to the given file (necessary for counting)
         case 'link':
             // $content .= '<a href="' . $src . '">' . urldecode($file) . '</a>';
             $content
-                .= '<form 
+                .= '<form
                         class="FileInfoDownload"
                         action="' . $this->PLUGIN_SELF_URL . 'download.php"
+                        method="post"
                     >';
-            $content .= '<input name="url" type="hidden" value="' . $url . '" />';
+            $content .= '<input name="url" type="hidden" value="' . $src . '" />';
+            $content .= '<input name="file" type="hidden" value="' . $file . '" />';
             $content
                 .= '<input
                         name="submit"
@@ -197,17 +201,17 @@ class FileInfo extends Plugin
                     />';
             $content .= '</form>';
             break;
-        
+
         // returns filetype
         case 'type':
             $content .= $CatPage->get_FileType($file);
             break;
-        
+
         // returns filesize
         case 'size':
             $content .= $this->formatFilesize(filesize($url));
             break;
-        
+
         default:
             return $this->throwError(
                 $this->_cms_lang->getLanguageValue(
@@ -226,7 +230,7 @@ class FileInfo extends Plugin
 
     /**
      * sets backend configuration elements and template
-     * 
+     *
      * @return Array configuration
      */
     function getConfig()
@@ -377,9 +381,9 @@ class FileInfo extends Plugin
     }
 
     /**
-     * sets default backend configuration elements, if no plugin.conf.php is 
+     * sets default backend configuration elements, if no plugin.conf.php is
      * created yet
-     * 
+     *
      * @return Array configuration
      */
     function getDefaultSettings()
@@ -393,7 +397,7 @@ class FileInfo extends Plugin
 
     /**
      * sets backend plugin information
-     * 
+     *
      * @return Array information
      */
     function getInfo()
@@ -415,7 +419,7 @@ class FileInfo extends Plugin
         $info = array(
             '<b>' . self::PLUGIN_TITLE . '</b> ' . self::PLUGIN_VERSION,
             self::MOZILO_VERSION,
-            $this->_admin_lang->getLanguageValue('description'), 
+            $this->_admin_lang->getLanguageValue('description'),
             self::PLUGIN_AUTHOR,
             self::PLUGIN_DOCU,
             $tags
@@ -426,13 +430,13 @@ class FileInfo extends Plugin
 
     /**
      * creates configuration for text fields
-     * 
+     *
      * @param string $description Label
      * @param string $maxlength   Maximum number of characters
      * @param string $size        Size
      * @param string $regex       Regular expression for allowed input
      * @param string $regex_error Wrong input error message
-     * 
+     *
      * @return Array  Configuration
      */
     protected function confText(
@@ -465,13 +469,13 @@ class FileInfo extends Plugin
 
     /**
      * creates configuration for textareas
-     * 
+     *
      * @param string $description Label
      * @param string $cols        Number of columns
      * @param string $rows        Number of rows
      * @param string $regex       Regular expression for allowed input
      * @param string $regex_error Wrong input error message
-     * 
+     *
      * @return Array  Configuration
      */
     protected function confTextarea(
@@ -504,14 +508,14 @@ class FileInfo extends Plugin
 
     /**
      * creates configuration for password fields
-     * 
+     *
      * @param string  $description Label
      * @param string  $maxlength   Maximum number of characters
      * @param string  $size        Size
      * @param string  $regex       Regular expression for allowed input
      * @param string  $regex_error Wrong input error message
      * @param boolean $saveasmd5   Safe password as md5 (recommended!)
-     * 
+     *
      * @return Array   Configuration
      */
     protected function confPassword(
@@ -543,9 +547,9 @@ class FileInfo extends Plugin
 
     /**
      * creates configuration for checkboxes
-     * 
+     *
      * @param string $description Label
-     * 
+     *
      * @return Array  Configuration
      */
     protected function confCheck($description)
@@ -559,10 +563,10 @@ class FileInfo extends Plugin
 
     /**
      * creates configuration for radio buttons
-     * 
+     *
      * @param string $description  Label
      * @param string $descriptions Array Single item labels
-     * 
+     *
      * @return Array Configuration
      */
     protected function confRadio($description, $descriptions)
@@ -572,16 +576,16 @@ class FileInfo extends Plugin
             'type' => 'select',
             'description' => $description,
             'descriptions' => $descriptions,
-        ); 
+        );
     }
 
     /**
      * creates configuration for select fields
-     * 
+     *
      * @param string  $description  Label
      * @param string  $descriptions Array Single item labels
      * @param boolean $multiple     Enable multiple item selection
-     * 
+     *
      * @return Array   Configuration
      */
     protected function confSelect($description, $descriptions, $multiple = false)
@@ -597,9 +601,9 @@ class FileInfo extends Plugin
 
     /**
      * throws styled error message
-     * 
+     *
      * @param string $text Content of error message
-     * 
+     *
      * @return string HTML content
      */
     protected function throwError($text)
@@ -612,10 +616,10 @@ class FileInfo extends Plugin
 
     /**
      * returns filesize with unit, like 5,32 M
-     * 
+     *
      * @param integer $bytes    number of bytes
      * @param integer $decimals number of decimals
-     * 
+     *
      * @return string formatted filesize
      */
     protected function formatFilesize($bytes, $decimals = 2)
@@ -623,7 +627,7 @@ class FileInfo extends Plugin
         // $sz = 'BKMGTP';
         $sz = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
         $factor = floor((strlen($bytes) - 1) / 3);
-        return 
+        return
             sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . @$sz[$factor];
     }
 
