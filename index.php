@@ -117,7 +117,7 @@ class FileInfo extends Plugin
         // set type contents
         $types = array(
             $this->getLink($src, $param_file, $param_linktext), // #LINK#
-            $CatPage->get_FileType($file),                      // #TYPE#
+            $this->getType($file),                      // #TYPE#
             $this->formatFilesize(filesize($url)),              // #SIZE#
             $this->getCount($param_file),                       // #COUNT#
         );
@@ -240,7 +240,7 @@ class FileInfo extends Plugin
                 $template .= '
                     <tr>
                         <td>' . urldecode($filename) . '</td>
-                        <td>' . $CatPage->get_FileType(urldecode($filename)) . '</td>
+                        <td>' . $this->getType(urldecode($filename)) . '</td>
                         <td>' . $this->formatFilesize(filesize($url)) . '</td>
                         <td>' . $this->getCount($catfile) . '</td>
                     </tr>';
@@ -324,6 +324,23 @@ class FileInfo extends Plugin
             $this->PLUGIN_SELF_DIR . 'data/' . $catfile . '.php'
         );
         return ($count == '') ? '0' : $count;
+    }
+
+    /**
+     * gets type extension of given file
+     *
+     * @param string $file name of file
+     *
+     * @return html uppercase file type
+     */
+    protected function getType($file)
+    {
+        global $CatPage;
+        $type =
+            '<span style="text-transform:uppercase;">'
+            . substr($CatPage->get_FileType($file), 1)
+            . '</span>';
+        return $type;
     }
 
     /**
