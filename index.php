@@ -54,7 +54,7 @@ class FileInfo extends Plugin
     const PLUGIN_VERSION = 'v0.x.jjjj-mm-dd';
     const MOZILO_VERSION = '2.0';
     private $_plugin_tags = array(
-        'tag1' => '{FileInfo|<file>|<attribute>|<linktext>}',
+        'tag' => '{FileInfo|<file>|<template>|<linktext>}',
     );
 
     const LOGO_URL = 'http://media.devmount.de/logo_pluginconf.png';
@@ -219,7 +219,7 @@ class FileInfo extends Plugin
                     . '</div>
                     <table>
                         <tr>
-                            <th width="300px">'
+                            <th width="350px">'
                             . $this->_admin_lang->getLanguageValue('admin_filename')
                             . '</th>
                             <th width="80px">'
@@ -278,7 +278,10 @@ class FileInfo extends Plugin
         $info = array(
             '<b>' . self::PLUGIN_TITLE . '</b> ' . self::PLUGIN_VERSION,
             self::MOZILO_VERSION,
-            $this->_admin_lang->getLanguageValue('description'),
+            $this->_admin_lang->getLanguageValue(
+                'description',
+                htmlspecialchars($this->_plugin_tags['tag'])
+            ),
             self::PLUGIN_AUTHOR,
             self::PLUGIN_DOCU,
             $tags
@@ -336,8 +339,8 @@ class FileInfo extends Plugin
     protected function getType($file)
     {
         global $CatPage;
-        $type =
-            '<span style="text-transform:uppercase;">'
+        $type
+            = '<span style="text-transform:uppercase;">'
             . substr($CatPage->get_FileType($file), 1)
             . '</span>';
         return $type;
