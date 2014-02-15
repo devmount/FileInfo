@@ -25,16 +25,18 @@ if ($_POST['submit'] != '') {
     $return_url = $_POST['url'];
     $filename = $_POST['file'];
 
+    // load current counter value
     $count = Database::loadArray('data/' . $filename . '.php');
     if ($count == '') {
         $count = 0;
     }
     $count++;
-    print_r($count);
+
+    // save incremented counter value
     Database::saveArray('data/' . $filename . '.php', $count);
 
     // redirect to file to be downloaded
-    // header('Location: ' . $return_url);
+    header('Location: ' . $return_url);
 }
 
 ?>

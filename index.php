@@ -28,6 +28,7 @@ if (!defined('IS_CMS')) {
     die();
 }
 
+// add database class
 require_once "database.php";
 
 /**
@@ -200,6 +201,12 @@ class FileInfo extends Plugin
                         value="' . urldecode($file) . '"
                     />';
             $content .= '</form>';
+            break;
+
+        // returns hit counts
+        case 'hits':
+            $hits = Database::loadArray($this->PLUGIN_SELF_DIR . 'data/' . $file . '.php');
+            ($hits == '') ? $content .= '0' : $content .= $hits;
             break;
 
         // returns filetype

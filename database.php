@@ -133,6 +133,7 @@ class Database
     {
         if (!file_exists($filename)) {
             touch($filename);
+            chmod($filename, 0777);
         }
         $data = file_get_contents($filename);
         $data = trim(str_replace('<?php die(); ?>', '', $data));
