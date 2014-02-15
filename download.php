@@ -23,17 +23,17 @@ require_once "database.php";
 if ($_POST['submit'] != '') {
     // get formula data
     $return_url = $_POST['url'];
-    $filename = $_POST['file'];
+    $catfile = $_POST['catfile'];
 
     // load current counter value
-    $count = Database::loadArray('data/' . $filename . '.php');
+    $count = Database::loadArray('data/' . $catfile . '.php');
     if ($count == '') {
         $count = 0;
     }
     $count++;
 
     // save incremented counter value
-    Database::saveArray('data/' . $filename . '.php', $count);
+    Database::saveArray('data/' . $catfile . '.php', $count);
 
     // redirect to file to be downloaded
     header('Location: ' . $return_url);

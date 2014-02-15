@@ -116,15 +116,16 @@ class FileInfo extends Plugin
         $marker = array('#LINK#','#TYPE#','#SIZE#','#COUNT#');
         // set type contents
         $types = array(
-            $this->getLink($src, $file, $param_linktext),
-            $CatPage->get_FileType($file),
-            $this->formatFilesize(filesize($url)),
-            $this->getCount($file),
+            $this->getLink($src, $param_file, $param_linktext), // #LINK#
+            $CatPage->get_FileType($file),                      // #TYPE#
+            $this->formatFilesize(filesize($url)),              // #SIZE#
+            $this->getCount($param_file),                       // #COUNT#
         );
 
         // initialize return content, begin plugin content
         $content = '<!-- BEGIN ' . self::PLUGIN_TITLE . ' plugin content --> ';
 
+        // fill template with content
         $content .= str_replace($marker, $types, $param_template);
 
         // end plugin content
@@ -140,7 +141,113 @@ class FileInfo extends Plugin
      */
     function getConfig()
     {
+        global $CatPage;
+
         $config = array();
+
+        // Template CSS
+        $css_admin_header = '
+            margin: -0.4em -0.8em -5px -0.8em;
+            padding: 10px;
+            background-color: #234567;
+            color: #fff;
+            text-shadow: #000 0 1px 3px;
+        ';
+        $css_admin_header_span = '
+            font-size:20px;
+            vertical-align: top;
+            padding-top: 3px;
+            display: inline-block;
+        ';
+        $css_admin_subheader = '
+            margin: -0.4em -0.8em 5px -0.8em;
+            padding: 5px 9px;
+            background-color: #ddd;
+            color: #111;
+            text-shadow: #fff 0 1px 2px;
+        ';
+        $css_admin_li = '
+            background: #eee;
+        ';
+        $css_admin_default = '
+            color: #aaa;
+            padding-left: 6px;
+        ';
+
+        // get all registered files
+        $catfiles = array_diff(
+            scandir($this->PLUGIN_SELF_DIR . 'data', 1),
+            array('..', '.')
+        );
+
+        // build (category => file1, file2) structure
+        $sortedfiles = array();
+
+        foreach ($catfiles as $catfile) {
+            list($cat, $file) = explode('%3A', $catfile);
+            $sortedfiles[$cat][] = substr($file, 0, -4);
+        }
+
+        // build Template
+        $template = '
+            <div style="' . $css_admin_header . '">
+            <span style="' . $css_admin_header_span . '">'
+                . $this->_admin_lang->getLanguageValue(
+                    'admin_header',
+                    self::PLUGIN_TITLE
+                )
+            . '</span>
+            <a href="' . self::PLUGIN_DOCU . '" target="_blank">
+            <img style="float:right;" src="' . self::LOGO_URL . '" />
+            </a>
+            </div>
+        ';
+
+        // find all categories
+        foreach ($sortedfiles as $cat => $files) {
+            $template .= '
+                </li>
+                <li
+                    class="mo-in-ul-li ui-widget-content"
+                    style="' . $css_admin_li . '"
+                >
+                    <div style="' . $css_admin_subheader . '">'
+                    . urldecode($cat)
+                    . '</div>
+                    <table>
+                        <tr>
+                            <th width="300px">'
+                            . $this->_admin_lang->getLanguageValue('admin_filename')
+                            . '</th>
+                            <th width="80px">'
+                            . $this->_admin_lang->getLanguageValue('admin_filetype')
+                            . '</th>
+                            <th width="80px">'
+                            . $this->_admin_lang->getLanguageValue('admin_filesize')
+                            . '</th>
+                            <th width="80px">'
+                            . $this->_admin_lang->getLanguageValue('admin_filecount')
+                            . '</th>
+                        </tr>
+                ';
+            // find all files in current category
+            foreach ($files as $filename) {
+                $url = $CatPage->get_pfadFile($cat, $filename);
+                $catfile = $cat . '%3A' . $filename;
+                $template .= '
+                    <tr>
+                        <td>' . urldecode($filename) . '</td>
+                        <td>' . $CatPage->get_FileType(urldecode($filename)) . '</td>
+                        <td>' . $this->formatFilesize(filesize($url)) . '</td>
+                        <td>' . $this->getCount($catfile) . '</td>
+                    </tr>';
+            }
+            $template .= '</table>';
+        }
+
+        $template .= '<div>';
+        $config['--template~~'] = $template;
+
         return $config;
     }
 
@@ -181,13 +288,14 @@ class FileInfo extends Plugin
      * builds formula with download link
      *
      * @param string $src      url of download file
-     * @param string $file     name of download file
+     * @param string $catfile  url coded cat:filename
      * @param string $linktext optional text for download link
      *
      * @return html formula
      */
-    protected function getLink($src, $file, $linktext = '')
+    protected function getLink($src, $catfile, $linktext = '')
     {
+        list($cat, $file) = explode('%3A', $catfile);
         $text = ($linktext == '') ? urldecode($file) : $linktext;
         return '<form
                     class="FileInfoDownload"
@@ -195,7 +303,7 @@ class FileInfo extends Plugin
                     method="post"
                 >
                     <input name="url" type="hidden" value="' . $src . '" />
-                    <input name="file" type="hidden" value="' . $file . '" />
+                    <input name="catfile" type="hidden" value="' . $catfile . '" />
                     <input name="submit" type="submit" value="'. $text . '"/>
                 </form>';
     }
@@ -203,14 +311,14 @@ class FileInfo extends Plugin
     /**
      * gets current hit count of given file
      *
-     * @param string $file name of file
+     * @param string $catfile name of file
      *
      * @return string number of hits
      */
-    protected function getCount($file)
+    protected function getCount($catfile)
     {
         $count = Database::loadArray(
-            $this->PLUGIN_SELF_DIR . 'data/' . $file . '.php'
+            $this->PLUGIN_SELF_DIR . 'data/' . $catfile . '.php'
         );
         return ($count == '') ? '0' : $count;
     }
