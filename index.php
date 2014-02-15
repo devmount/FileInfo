@@ -60,58 +60,6 @@ class FileInfo extends Plugin
     const LOGO_URL = 'http://media.devmount.de/logo_pluginconf.png';
 
     /**
-     * set configuration elements, their default values and their configuration
-     * parameters
-     *
-     * @var array $_confdefault
-     *      text     => default, type, maxlength, size, regex
-     *      textarea => default, type, cols, rows, regex
-     *      password => default, type, maxlength, size, regex, saveasmd5
-     *      check    => default, type
-     *      radio    => default, type, descriptions
-     *      select   => default, type, descriptions, multiselect
-     */
-    private $_confdefault = array(
-        'text' => array(
-            'string',
-            'text',
-            '100',
-            '5',
-            "/^[0-9]{1,3}$/",
-        ),
-        'textarea' => array(
-            'string',
-            'textarea',
-            '10',
-            '10',
-            "/^[a-zA-Z0-9]{1,10}$/",
-        ),
-        'password' => array(
-            'string',
-            'password',
-            '100',
-            '5',
-            "/^[a-zA-Z0-9]{8,20}$/",
-            true,
-        ),
-        'check' => array(
-            true,
-            'check',
-        ),
-        'radio' => array(
-            'red',
-            'radio',
-            array('red', 'green', 'blue'),
-        ),
-        'select' => array(
-            'bike',
-            'select',
-            array('car','bike','plane'),
-            false,
-        ),
-    );
-
-    /**
      * creates plugin content
      *
      * @param string $value Parameter divided by '|'
@@ -131,23 +79,9 @@ class FileInfo extends Plugin
             . '.txt'
         );
 
-        // get language labels
-        // $label = $this->_cms_lang->getLanguageValue('label');
-
         // get params
-        list($param_file, $param_type, $param_linktext)
+        list($param_file, $param_template, $param_linktext)
             = $this->makeUserParaArray($value, false, '|');
-
-        // get conf and set default
-        $conf = array();
-        foreach ($this->_confdefault as $elem => $default) {
-            $conf[$elem] = array(
-                ($this->settings->get($elem) == '')
-                    ? $default[0]
-                    : $this->settings->get($elem),
-                $default[1],
-            );
-        }
 
         // check if cat:file construct is correct
         if (!strpos($param_file, '%3A')) {
@@ -178,57 +112,20 @@ class FileInfo extends Plugin
         // get file path url
         $url = $CatPage->get_pfadFile($cat, $file);
 
+        // set markers
+        $marker = array('#LINK#','#TYPE#','#SIZE#','#COUNT#');
+        // set type contents
+        $types = array(
+            $this->getLink($src, $file, $param_linktext),
+            $CatPage->get_FileType($file),
+            $this->formatFilesize(filesize($url)),
+            $this->getCount($file),
+        );
+
         // initialize return content, begin plugin content
         $content = '<!-- BEGIN ' . self::PLUGIN_TITLE . ' plugin content --> ';
 
-        // handle different types
-        switch ($param_type) {
-        // returns a download link to the given file (necessary for counting)
-        case 'link':
-            // build linked text
-            $linktext = ($param_linktext == '') ? urldecode($file) : $param_linktext;
-
-            // build download form
-            $content
-                .= '<form
-                        class="FileInfoDownload"
-                        action="' . $this->PLUGIN_SELF_URL . 'download.php"
-                        method="post"
-                    >';
-            $content .= '<input name="url" type="hidden" value="' . $src . '" />';
-            $content .= '<input name="file" type="hidden" value="' . $file . '" />';
-            $content
-                .= '<input name="submit" type="submit" value="'. $linktext . '"/>';
-            $content .= '</form>';
-            break;
-
-        // returns hit counts
-        case 'hits':
-            $hits = Database::loadArray(
-                $this->PLUGIN_SELF_DIR . 'data/' . $file . '.php'
-            );
-            ($hits == '') ? $content .= '0' : $content .= $hits;
-            break;
-
-        // returns filetype
-        case 'type':
-            $content .= $CatPage->get_FileType($file);
-            break;
-
-        // returns filesize
-        case 'size':
-            $content .= $this->formatFilesize(filesize($url));
-            break;
-
-        default:
-            return $this->throwError(
-                $this->_cms_lang->getLanguageValue(
-                    'error_invalid_type',
-                    $param_type
-                )
-            );
-            break;
-        }
+        $content .= str_replace($marker, $types, $param_template);
 
         // end plugin content
         $content .= '<!-- END ' . self::PLUGIN_TITLE . ' plugin content --> ';
@@ -244,162 +141,6 @@ class FileInfo extends Plugin
     function getConfig()
     {
         $config = array();
-
-        // read configuration values
-        foreach ($this->_confdefault as $key => $value) {
-            // handle each form type
-            switch ($value[1]) {
-            case 'text':
-                $config[$key] = $this->confText(
-                    $this->_admin_lang->getLanguageValue('config_' . $key),
-                    $value[2],
-                    $value[3],
-                    $value[4],
-                    $this->_admin_lang->getLanguageValue(
-                        'config_' . $key . '_error'
-                    )
-                );
-                break;
-
-            case 'textarea':
-                $config[$key] = $this->confTextarea(
-                    $this->_admin_lang->getLanguageValue('config_' . $key),
-                    $value[2],
-                    $value[3],
-                    $value[4],
-                    $this->_admin_lang->getLanguageValue(
-                        'config_' . $key . '_error'
-                    )
-                );
-                break;
-
-            case 'password':
-                $config[$key] = $this->confPassword(
-                    $this->_admin_lang->getLanguageValue('config_' . $key),
-                    $value[2],
-                    $value[3],
-                    $value[4],
-                    $this->_admin_lang->getLanguageValue(
-                        'config_' . $key . '_error'
-                    ),
-                    $value[5]
-                );
-                break;
-
-            case 'check':
-                $config[$key] = $this->confCheck(
-                    $this->_admin_lang->getLanguageValue('config_' . $key)
-                );
-                break;
-
-            case 'radio':
-                $descriptions = array();
-                foreach ($value[2] as $label) {
-                    $descriptions[$label] = $this->_admin_lang->getLanguageValue(
-                        'config_' . $key . '_' . $label
-                    );
-                }
-                $config[$key] = $this->confRadio(
-                    $this->_admin_lang->getLanguageValue('config_' . $key),
-                    $descriptions
-                );
-                break;
-
-            case 'select':
-                $descriptions = array();
-                foreach ($value[2] as $label) {
-                    $descriptions[$label] = $this->_admin_lang->getLanguageValue(
-                        'config_' . $key . '_' . $label
-                    );
-                }
-                $config[$key] = $this->confSelect(
-                    $this->_admin_lang->getLanguageValue('config_' . $key),
-                    $descriptions,
-                    $value[3]
-                );
-                break;
-
-            default:
-                break;
-            }
-        }
-
-        // Template CSS
-        $css_admin_header = '
-            margin: -0.4em -0.8em -5px -0.8em;
-            padding: 10px;
-            background-color: #234567;
-            color: #fff;
-            text-shadow: #000 0 1px 3px;
-        ';
-        $css_admin_header_span = '
-            font-size:20px;
-            vertical-align: top;
-            padding-top: 3px;
-            display: inline-block;
-        ';
-        $css_admin_subheader = '
-            margin: -0.4em -0.8em 5px -0.8em;
-            padding: 5px 9px;
-            background-color: #ddd;
-            color: #111;
-            text-shadow: #fff 0 1px 2px;
-        ';
-        $css_admin_li = '
-            background: #eee;
-        ';
-        $css_admin_default = '
-            color: #aaa;
-            padding-left: 6px;
-        ';
-
-        // build Template
-        // $config['--template~~'] = '
-        //     <div style="' . $css_admin_header . '">
-        //     <span style="' . $css_admin_header_span . '">'
-        //         . $this->_admin_lang->getLanguageValue(
-        //              'admin_header',
-        //              self::PLUGIN_TITLE
-        //         )
-        //     . '</span>
-        //     <a href="' . self::PLUGIN_DOCU . '" target="_blank">
-        //     <img style="float:right;" src="' . self::LOGO_URL . '" />
-        //     </a>
-        //     </div>
-        // </li>
-        // <li class="mo-in-ul-li ui-widget-content" style="' . $css_admin_li . '">
-        //     <div style="' . $css_admin_subheader . '">'
-        //     . $this->_admin_lang->getLanguageValue('admin_spacing') . '</div>
-        //     <div style="margin-bottom:5px;">
-        //         {test1_text}
-        //         {test1_description}
-        //         <span style="' . $css_admin_default .'">
-        //             [' . $this->_confdefault['test1'][0] .']
-        //         </span>
-        //     </div>
-        //     <div style="margin-bottom:5px;">
-        //         {test2_text}
-        //         {test2_description}
-        //         <span style="' . $css_admin_default .'">
-        //             [' . $this->_confdefault['test2'][0] .']
-        //         </span>
-        // ';
-
-        return $config;
-    }
-
-    /**
-     * sets default backend configuration elements, if no plugin.conf.php is
-     * created yet
-     *
-     * @return Array configuration
-     */
-    function getDefaultSettings()
-    {
-        $config = array('active' => 'true');
-        foreach ($this->_confdefault as $elem => $default) {
-            $config[$elem] = $default[0];
-        }
         return $config;
     }
 
@@ -437,174 +178,41 @@ class FileInfo extends Plugin
     }
 
     /**
-     * creates configuration for text fields
+     * builds formula with download link
      *
-     * @param string $description Label
-     * @param string $maxlength   Maximum number of characters
-     * @param string $size        Size
-     * @param string $regex       Regular expression for allowed input
-     * @param string $regex_error Wrong input error message
+     * @param string $src      url of download file
+     * @param string $file     name of download file
+     * @param string $linktext optional text for download link
      *
-     * @return Array  Configuration
+     * @return html formula
      */
-    protected function confText(
-        $description,
-        $maxlength = '',
-        $size = '',
-        $regex = '',
-        $regex_error = ''
-    ) {
-        // required properties
-        $conftext = array(
-            'type' => 'text',
-            'description' => $description,
-        );
-        // optional properties
-        if ($maxlength != '') {
-            $conftext['maxlength'] = $maxlength;
-        }
-        if ($size != '') {
-            $conftext['size'] = $size;
-        }
-        if ($regex != '') {
-            $conftext['regex'] = $regex;
-        }
-        if ($regex_error != '') {
-            $conftext['regex_error'] = $regex_error;
-        }
-        return $conftext;
-    }
-
-    /**
-     * creates configuration for textareas
-     *
-     * @param string $description Label
-     * @param string $cols        Number of columns
-     * @param string $rows        Number of rows
-     * @param string $regex       Regular expression for allowed input
-     * @param string $regex_error Wrong input error message
-     *
-     * @return Array  Configuration
-     */
-    protected function confTextarea(
-        $description,
-        $cols = '',
-        $rows = '',
-        $regex = '',
-        $regex_error = ''
-    ) {
-        // required properties
-        $conftext = array(
-            'type' => 'text',
-            'description' => $description,
-        );
-        // optional properties
-        if ($cols != '') {
-            $conftext['cols'] = $cols;
-        }
-        if ($rows != '') {
-            $conftext['rows'] = $rows;
-        }
-        if ($regex != '') {
-            $conftext['regex'] = $regex;
-        }
-        if ($regex_error != '') {
-            $conftext['regex_error'] = $regex_error;
-        }
-        return $conftext;
-    }
-
-    /**
-     * creates configuration for password fields
-     *
-     * @param string  $description Label
-     * @param string  $maxlength   Maximum number of characters
-     * @param string  $size        Size
-     * @param string  $regex       Regular expression for allowed input
-     * @param string  $regex_error Wrong input error message
-     * @param boolean $saveasmd5   Safe password as md5 (recommended!)
-     *
-     * @return Array   Configuration
-     */
-    protected function confPassword(
-        $description,
-        $maxlength = '',
-        $size = '',
-        $regex = '',
-        $regex_error = '',
-        $saveasmd5 = true
-    ) {
-        // required properties
-        $conftext = array(
-            'type' => 'text',
-            'description' => $description,
-        );
-        // optional properties
-        if ($maxlength != '') {
-            $conftext['maxlength'] = $maxlength;
-        }
-        if ($size != '') {
-            $conftext['size'] = $size;
-        }
-        if ($regex != '') {
-            $conftext['regex'] = $regex;
-        }
-        $conftext['saveasmd5'] = $saveasmd5;
-        return $conftext;
-    }
-
-    /**
-     * creates configuration for checkboxes
-     *
-     * @param string $description Label
-     *
-     * @return Array  Configuration
-     */
-    protected function confCheck($description)
+    protected function getLink($src, $file, $linktext = '')
     {
-        // required properties
-        return array(
-            'type' => 'checkbox',
-            'description' => $description,
-        );
+        $text = ($linktext == '') ? urldecode($file) : $linktext;
+        return '<form
+                    class="FileInfoDownload"
+                    action="' . $this->PLUGIN_SELF_URL . 'download.php"
+                    method="post"
+                >
+                    <input name="url" type="hidden" value="' . $src . '" />
+                    <input name="file" type="hidden" value="' . $file . '" />
+                    <input name="submit" type="submit" value="'. $text . '"/>
+                </form>';
     }
 
     /**
-     * creates configuration for radio buttons
+     * gets current hit count of given file
      *
-     * @param string $description  Label
-     * @param string $descriptions Array Single item labels
+     * @param string $file name of file
      *
-     * @return Array Configuration
+     * @return string number of hits
      */
-    protected function confRadio($description, $descriptions)
+    protected function getCount($file)
     {
-        // required properties
-        return array(
-            'type' => 'select',
-            'description' => $description,
-            'descriptions' => $descriptions,
+        $count = Database::loadArray(
+            $this->PLUGIN_SELF_DIR . 'data/' . $file . '.php'
         );
-    }
-
-    /**
-     * creates configuration for select fields
-     *
-     * @param string  $description  Label
-     * @param string  $descriptions Array Single item labels
-     * @param boolean $multiple     Enable multiple item selection
-     *
-     * @return Array   Configuration
-     */
-    protected function confSelect($description, $descriptions, $multiple = false)
-    {
-        // required properties
-        return array(
-            'type' => 'select',
-            'description' => $description,
-            'descriptions' => $descriptions,
-            'multiple' => $multiple,
-        );
+        return ($count == '') ? '0' : $count;
     }
 
     /**
