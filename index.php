@@ -126,6 +126,9 @@ class FileInfo extends Plugin
         $content = '<!-- BEGIN ' . self::PLUGIN_TITLE . ' plugin content --> ';
 
         // fill template with content
+        if ($param_template == '') {
+            $param_template = '#LINK#';
+        }
         $content .= str_replace($marker, $types, $param_template);
 
         // end plugin content
