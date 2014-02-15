@@ -2,7 +2,7 @@
     FileInfo CSS styles
 */
 
-.FileInfo { 
+.FileInfo {
 }
 
 .FileInfoError {
@@ -24,6 +24,10 @@
     color: #f44;
 }
 
+.FileInfoDownload {
+    margin: 0;
+    display: inline-block;
+}
 .FileInfoDownload input[type="submit"] {
     /* Remove all decorations to look like normal text */
     background: none;

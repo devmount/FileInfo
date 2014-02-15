@@ -54,7 +54,7 @@ class FileInfo extends Plugin
     const PLUGIN_VERSION = 'v0.x.jjjj-mm-dd';
     const MOZILO_VERSION = '2.0';
     private $_plugin_tags = array(
-        'tag1' => '{FileInfo|<file>|<attribute>}',
+        'tag1' => '{FileInfo|<file>|<attribute>|<linktext>}',
     );
 
     const LOGO_URL = 'http://media.devmount.de/logo_pluginconf.png';
@@ -135,7 +135,7 @@ class FileInfo extends Plugin
         // $label = $this->_cms_lang->getLanguageValue('label');
 
         // get params
-        list($param_file, $param_type)
+        list($param_file, $param_type, $param_linktext)
             = $this->makeUserParaArray($value, false, '|');
 
         // get conf and set default
@@ -185,7 +185,10 @@ class FileInfo extends Plugin
         switch ($param_type) {
         // returns a download link to the given file (necessary for counting)
         case 'link':
-            // $content .= '<a href="' . $src . '">' . urldecode($file) . '</a>';
+            // build linked text
+            $linktext = ($param_linktext == '') ? urldecode($file) : $param_linktext;
+
+            // build download form
             $content
                 .= '<form
                         class="FileInfoDownload"
@@ -195,17 +198,15 @@ class FileInfo extends Plugin
             $content .= '<input name="url" type="hidden" value="' . $src . '" />';
             $content .= '<input name="file" type="hidden" value="' . $file . '" />';
             $content
-                .= '<input
-                        name="submit"
-                        type="submit"
-                        value="' . urldecode($file) . '"
-                    />';
+                .= '<input name="submit" type="submit" value="'. $linktext . '"/>';
             $content .= '</form>';
             break;
 
         // returns hit counts
         case 'hits':
-            $hits = Database::loadArray($this->PLUGIN_SELF_DIR . 'data/' . $file . '.php');
+            $hits = Database::loadArray(
+                $this->PLUGIN_SELF_DIR . 'data/' . $file . '.php'
+            );
             ($hits == '') ? $content .= '0' : $content .= $hits;
             break;
 
