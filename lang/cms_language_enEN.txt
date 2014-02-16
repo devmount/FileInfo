@@ -1,2 +1,3 @@
-error		= Error
-error_sth 	= ...
+error		        = Error
+error_invalid_input = Ivalid input: "{PARAM1}" is not like "Category:Filename"
+error_invalid_file  = A file with filename "{PARAM1}" does not exist in category "{PARAM2}"
