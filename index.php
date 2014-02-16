@@ -15,7 +15,8 @@
  * @version  GIT: v0.0.2014-02-16
  * @link     https://github.com/devmount/FileInfo
  * @link     http://devmount.de/Develop/Mozilo%20Plugins/FileInfo.html
- * @see      Many are the plans in a person’s heart, but it is the Lord’s purpose that prevails.
+ * @see      Many are the plans in a person’s heart,
+ *           but it is the Lord’s purpose that prevails.
  *            - The Bible
  *
  * Plugin created by DEVMOUNT

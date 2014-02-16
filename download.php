@@ -22,14 +22,11 @@ require_once "database.php";
 
 if ($_POST['submit'] != '') {
     // get formula data
-    $return_url = $_POST['url'];
-    $catfile = $_POST['catfile'];
+    $return_url = filter_var($_POST['url'], FILTER_SANITIZE_URL);
+    $catfile = filter_var($_POST['catfile'], FILTER_SANITIZE_URL);
 
     // load current counter value
-    $count = Database::loadArray('data/' . $catfile . '.php');
-    if ($count == '') {
-        $count = 0;
-    }
+    $count = intval(Database::loadArray('data/' . $catfile . '.php'));
     $count++;
 
     // save incremented counter value
