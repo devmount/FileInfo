@@ -240,25 +240,60 @@ class FileInfo extends Plugin
                             . '</th>
                         </tr>
                 ';
+
             // find all files in current category
             foreach ($files as $filename) {
+                // get filepaths
                 $url = $CatPage->get_pfadFile($cat, $filename);
                 $src = $CatPage->get_srcFile($cat, $filename);
+
+                // rebuild catfile form
                 $catfile = $cat . '%3A' . $filename;
+
+                // calculate percentage of maximum counts
+                $count = $this->getCount($catfile);
+                $maxcount = $this->getMaxCount();
+                $percentcount = round($count/$maxcount*100, 1);
+
+                // calculate percentage of maximum size
+                $size = filesize($url);
+                $maxsize = $this->getMaxSize();
+                $percentsize = round($size/$maxsize*100, 1);
+
                 $template .= '
                     <tr>
-                        <td><a href="' . $src . '" style="text-decoration:none;">'
-                        . urldecode($filename)
-                        . '</a></td>
+                        <td>
+                            <a href="' . $src . '" style="text-decoration:none;">'
+                            . urldecode($filename)
+                            . '</a>
+                        </td>
                         <td style="text-align:center;padding-right:10px;">'
-                        . $this->getType(urldecode($filename))
+                            . $this->getType(urldecode($filename))
                         . '</td>
-                        <td style="text-align:right;padding-right:10px;">'
-                        . $this->formatFilesize(filesize($url))
-                        . '</td>
-                        <td>'
-                        . $this->getCount($catfile)
-                        . '</td>
+                        <td style="text-align:right;padding-right:10px;">
+                            <div style="
+                                padding: 1px 4px;
+                                background: linear-gradient(
+                                    to left,
+                                    #ccc ' . $percentsize . '%,
+                                    transparent ' . $percentsize . '%
+                                );
+                            ">'
+                            . $this->formatFilesize($size)
+                            . '</div>
+                        </td>
+                        <td>
+                            <div style="
+                                padding: 1px 4px;
+                                background: linear-gradient(
+                                    to right,
+                                    #ccc ' . $percentcount . '%,
+                                    transparent ' . $percentcount . '%
+                                );
+                            ">'
+                            . $count
+                            . '</div>
+                        </td>
                     </tr>';
             }
             $template .= '</table>';
@@ -392,6 +427,66 @@ class FileInfo extends Plugin
         $factor = floor((strlen($bytes) - 1) / 3);
         return
             sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . @$sz[$factor];
+    }
+
+    /**
+     * finds maximum download number of all files
+     *
+     * @return int maximum download number
+     */
+    protected function getMaxCount()
+    {
+        // get all registered files
+        $catfiles = array_diff(
+            scandir($this->PLUGIN_SELF_DIR . 'data', 1),
+            array('..', '.')
+        );
+
+        // initialize counter
+        $max = 0;
+
+        // compare current max with each download number
+        foreach ($catfiles as $catfile) {
+            $count = intval($this->getCount(substr($catfile, 0, -4)));
+            if ($count > $max) {
+                $max = $count;
+            }
+        }
+
+        return $max;
+    }
+
+    /**
+     * finds maximum filezise of all files
+     *
+     * @return int maximum filesize
+     */
+    protected function getMaxSize()
+    {
+        global $CatPage;
+
+        // get all registered files
+        $catfiles = array_diff(
+            scandir($this->PLUGIN_SELF_DIR . 'data', 1),
+            array('..', '.')
+        );
+
+        // initialize counter
+        $max = 0;
+
+        // compare current max with each download number
+        foreach ($catfiles as $catfile) {
+            list($cat, $file) = explode('%3A', $catfile);
+            $filename = substr($file, 0, -4);
+            $url = $CatPage->get_pfadFile($cat, $filename);
+
+            $size = intval(filesize($url));
+            if ($size > $max) {
+                $max = $size;
+            }
+        }
+
+        return $max;
     }
 
 }
