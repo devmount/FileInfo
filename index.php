@@ -218,18 +218,24 @@ class FileInfo extends Plugin
                     <div style="' . $css_admin_subheader . '">'
                     . urldecode($cat)
                     . '</div>
-                    <table>
+                    <table width="100%">
+                        <colgroup>
+                            <col style="width:*;">
+                            <col style="width:80px;">
+                            <col style="width:80px;">
+                            <col style="width:80px;">
+                        </colgroup>
                         <tr>
-                            <th width="350px">'
+                            <th>'
                             . $this->_admin_lang->getLanguageValue('admin_filename')
                             . '</th>
-                            <th width="80px">'
+                            <th style="text-align:center;">'
                             . $this->_admin_lang->getLanguageValue('admin_filetype')
                             . '</th>
-                            <th width="80px">'
+                            <th style="text-align:center;">'
                             . $this->_admin_lang->getLanguageValue('admin_filesize')
                             . '</th>
-                            <th width="80px">'
+                            <th style="text-align:center;">'
                             . $this->_admin_lang->getLanguageValue('admin_filecount')
                             . '</th>
                         </tr>
@@ -237,13 +243,22 @@ class FileInfo extends Plugin
             // find all files in current category
             foreach ($files as $filename) {
                 $url = $CatPage->get_pfadFile($cat, $filename);
+                $src = $CatPage->get_srcFile($cat, $filename);
                 $catfile = $cat . '%3A' . $filename;
                 $template .= '
                     <tr>
-                        <td>' . urldecode($filename) . '</td>
-                        <td>' . $this->getType(urldecode($filename)) . '</td>
-                        <td>' . $this->formatFilesize(filesize($url)) . '</td>
-                        <td>' . $this->getCount($catfile) . '</td>
+                        <td><a href="' . $src . '" style="text-decoration:none;">'
+                        . urldecode($filename)
+                        . '</a></td>
+                        <td style="text-align:center;padding-right:10px;">'
+                        . $this->getType(urldecode($filename))
+                        . '</td>
+                        <td style="text-align:right;padding-right:10px;">'
+                        . $this->formatFilesize(filesize($url))
+                        . '</td>
+                        <td>'
+                        . $this->getCount($catfile)
+                        . '</td>
                     </tr>';
             }
             $template .= '</table>';
