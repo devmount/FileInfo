@@ -12,7 +12,7 @@
  * @package  PHP_MoziloPlugins
  * @author   HPdesigner <kontakt@devmount.de>
  * @license  GPL v3
- * @version  GIT: v0.0.2014-02-16
+ * @version  GIT: v0.1.2014-02-18
  * @link     https://github.com/devmount/FileInfo
  * @link     http://devmount.de/Develop/Mozilo%20Plugins/FileInfo.html
  * @see      Many are the plans in a person’s heart,
@@ -52,7 +52,7 @@ class FileInfo extends Plugin
     const PLUGIN_DOCU
         = 'http://devmount.de/Develop/Mozilo%20Plugins/FileInfo.html';
     const PLUGIN_TITLE   = 'FileInfo';
-    const PLUGIN_VERSION = 'v0.0.2014-02-16';
+    const PLUGIN_VERSION = 'v0.1.2014-02-18';
     const MOZILO_VERSION = '2.0';
     private $_plugin_tags = array(
         'tag' => '{FileInfo|<file>|<template>|<linktext>}',
