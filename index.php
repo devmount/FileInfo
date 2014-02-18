@@ -149,35 +149,6 @@ class FileInfo extends Plugin
 
         $config = array();
 
-        // Template CSS
-        $css_admin_header = '
-            margin: -0.4em -0.8em -5px -0.8em;
-            padding: 10px;
-            background-color: #234567;
-            color: #fff;
-            text-shadow: #000 0 1px 3px;
-        ';
-        $css_admin_header_span = '
-            font-size:20px;
-            vertical-align: top;
-            padding-top: 3px;
-            display: inline-block;
-        ';
-        $css_admin_subheader = '
-            margin: -0.4em -0.8em 5px -0.8em;
-            padding: 5px 9px;
-            background-color: #ddd;
-            color: #111;
-            text-shadow: #fff 0 1px 2px;
-        ';
-        $css_admin_li = '
-            background: #eee;
-        ';
-        $css_admin_default = '
-            color: #aaa;
-            padding-left: 6px;
-        ';
-
         // get all registered files
         $catfiles = array_diff(
             scandir($this->PLUGIN_SELF_DIR . 'data', 1),
@@ -192,10 +163,52 @@ class FileInfo extends Plugin
             $sortedfiles[$cat][] = substr($file, 0, -4);
         }
 
-        // build Template
+        // Template CSS
         $template = '
-            <div style="' . $css_admin_header . '">
-            <span style="' . $css_admin_header_span . '">'
+            <style>
+            .admin-header {
+                margin: -0.4em -0.8em -5px -0.8em;
+                padding: 10px;
+                background-color: #234567;
+                color: #fff;
+                text-shadow: #000 0 1px 3px;
+            }
+            .admin-header span {
+                font-size:20px;
+                vertical-align: top;
+                padding-top: 3px;
+                display: inline-block;
+            }
+            .admin-subheader {
+                margin: -0.4em -0.8em 5px -0.8em;
+                padding: 5px 9px;
+                background-color: #ddd;
+                color: #111;
+                text-shadow: #fff 0 1px 2px;
+            }
+            .admin-li {
+                background: #eee;
+            }
+            .admin-default {
+                color: #aaa;
+                padding-left: 6px;
+            }
+            .admin-link {
+                text-decoration:none;
+            }
+            .admin-link:hover {
+                color:#666;
+            }
+            .admin-li table tr:hover td {
+                background: #fff;
+            }
+            </style>
+        ';
+
+        // build Template
+        $template .= '
+            <div class="admin-header">
+            <span>'
                 . $this->_admin_lang->getLanguageValue(
                     'admin_header',
                     self::PLUGIN_TITLE
@@ -211,14 +224,11 @@ class FileInfo extends Plugin
         foreach ($sortedfiles as $cat => $files) {
             $template .= '
                 </li>
-                <li
-                    class="mo-in-ul-li ui-widget-content"
-                    style="' . $css_admin_li . '"
-                >
-                    <div style="' . $css_admin_subheader . '">'
+                <li class="mo-in-ul-li ui-widget-content admin-li">
+                    <div class="admin-subheader">'
                     . urldecode($cat)
                     . '</div>
-                    <table width="100%">
+                    <table width="100%" cellspacing="0" cellpadding="4px">
                         <colgroup>
                             <col style="width:*;">
                             <col style="width:80px;">
@@ -263,7 +273,7 @@ class FileInfo extends Plugin
                 $template .= '
                     <tr>
                         <td>
-                            <a href="' . $src . '" style="text-decoration:none;">'
+                            <a href="' . $src . '" class="admin-link">'
                             . urldecode($filename)
                             . '</a>
                         </td>
@@ -275,7 +285,7 @@ class FileInfo extends Plugin
                                 padding: 1px 4px;
                                 background: linear-gradient(
                                     to left,
-                                    #ccc ' . $percentsize . '%,
+                                    #abcdef ' . $percentsize . '%,
                                     transparent ' . $percentsize . '%
                                 );
                             ">'
@@ -287,7 +297,7 @@ class FileInfo extends Plugin
                                 padding: 1px 4px;
                                 background: linear-gradient(
                                     to right,
-                                    #ccc ' . $percentcount . '%,
+                                    #abcdef ' . $percentcount . '%,
                                     transparent ' . $percentcount . '%
                                 );
                             ">'
