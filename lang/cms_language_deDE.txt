@@ -1,3 +1,3 @@
-error 			    = Fehler
+error               = Fehler
 error_invalid_input = Inkorrekte Eingabe: "{PARAM1}" folgt nicht dem Schema "Kategorie:Dateiname"
 error_invalid_file  = Eine Datei mit dem Dateinamen "{PARAM1}" existiert nicht in der Kategorie "{PARAM2}"
