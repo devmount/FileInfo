@@ -58,6 +58,9 @@ class FileInfo extends Plugin
         'tag' => '{FileInfo|<file>|<template>|<linktext>}',
     );
 
+    // set markers
+    private $_marker = array('#LINK#','#TYPE#','#SIZE#','#COUNT#','#DATE#');
+
     const LOGO_URL = 'http://media.devmount.de/logo_pluginconf.png';
 
     /**
@@ -113,8 +116,6 @@ class FileInfo extends Plugin
         // get file path url
         $url = $CatPage->get_pfadFile($cat, $file);
 
-        // set markers
-        $marker = array('#LINK#','#TYPE#','#SIZE#','#COUNT#','#DATE#');
         // set type contents
         $types = array(
             $this->getLink($src, $param_file, $param_linktext), // #LINK#
@@ -131,7 +132,7 @@ class FileInfo extends Plugin
         if ($param_template == '') {
             $param_template = '#LINK#';
         }
-        $content .= str_replace($marker, $types, $param_template);
+        $content .= str_replace($this->_marker, $types, $param_template);
 
         // end plugin content
         $content .= '<!-- END ' . self::PLUGIN_TITLE . ' plugin content --> ';
@@ -350,7 +351,8 @@ class FileInfo extends Plugin
             self::MOZILO_VERSION,
             $this->_admin_lang->getLanguageValue(
                 'description',
-                htmlspecialchars($this->_plugin_tags['tag'])
+                htmlspecialchars($this->_plugin_tags['tag']),
+                implode(', ', $this->_marker)
             ),
             self::PLUGIN_AUTHOR,
             self::PLUGIN_DOCU,
