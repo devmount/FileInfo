@@ -114,13 +114,14 @@ class FileInfo extends Plugin
         $url = $CatPage->get_pfadFile($cat, $file);
 
         // set markers
-        $marker = array('#LINK#','#TYPE#','#SIZE#','#COUNT#');
+        $marker = array('#LINK#','#TYPE#','#SIZE#','#COUNT#','#DATE#');
         // set type contents
         $types = array(
             $this->getLink($src, $param_file, $param_linktext), // #LINK#
             $this->getType($file),                              // #TYPE#
             $this->formatFilesize(filesize($url)),              // #SIZE#
             $this->getCount($param_file),                       // #COUNT#
+            $this->formatFiledate(filectime($url)),             // #DATE#
         );
 
         // initialize return content, begin plugin content
@@ -437,6 +438,19 @@ class FileInfo extends Plugin
         $factor = floor((strlen($bytes) - 1) / 3);
         return
             sprintf("%.{$decimals}f ", $bytes / pow(1024, $factor)) . @$sz[$factor];
+    }
+
+    /**
+     * returns formatted filedate
+     *
+     * @param integer $tstamp timestamp to format
+     * @param string  $format optional date format
+     *
+     * @return string formatted filedate
+     */
+    protected function formatFiledate($tstamp, $format = 'd.m.Y')
+    {
+        return date($format, $tstamp);
     }
 
     /**
