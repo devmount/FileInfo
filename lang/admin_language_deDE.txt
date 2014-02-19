@@ -1,7 +1,9 @@
-tag             = Gibt den Dateilink mit entsprechenden Dateiinformationen zurück.
-description     = Generiert einen Downloadlink und verschiedene Informationen wie Typ, Größe und Anzahl der Downloads.<br /><br /><span style='font-weight:bold'>Nutzung:</span><br /><span style='font-family:monospace;margin:3px 3px; background-color:#eee;border:1px dotted #aaa;'>{PARAM1}</span><br /><br /><span style='font-family:monospace;'>&lt;file&gt;: </span>Der Dateiname der betreffenden Datei, in der Form <span style='font-family:monospace;'>@=Kategorie:Beispiel.zip=@</span><br /><span style='font-family:monospace;'>&lt;template&gt;: </span>Optional, Anordnung der Platzhalter. Mögliche Platzhalter sind: <span style='font-family:monospace;'>#LINK#, #TYPE#, #SIZE#, #COUNT#</span><br /><span style='font-family:monospace;'>&lt;linktext&gt;: </span>Optional, Text des Downloadlinks.<br /><br />Wird keiner der optionalen Parameter gesetzt <span style='font-family:monospace;'>{FileInfo|&lt;file&gt;}</span>, so wird lediglich der Downloadlink eingefügt.<br /><br /><span style='font-weight:bold'>Dokumentation:</span><br />Eine ausführliche Dokumentation ist auf <span style="font-style:italic">www.devmount.de</span> zu finden (siehe obenstehender Link).
-admin_header    = {PARAM1} Dateiliste
-admin_filename  = Dateiname
-admin_filetype  = Dateityp
-admin_filesize  = Dateigröße
-admin_filecount = Downloads
+tag                     = Gibt den Dateilink mit entsprechenden Dateiinformationen zurück.
+description             = Generiert einen Downloadlink und verschiedene Informationen wie Typ, Größe und Anzahl der Downloads.<br /><br /><span style='font-weight:bold'>Nutzung:</span><br /><span style='font-family:monospace;margin:3px 3px; background-color:#eee;border:1px dotted #aaa;'>{PARAM1}</span><br /><br /><span style='font-family:monospace;'>&lt;file&gt;: </span>Der Dateiname der betreffenden Datei, in der Form <span style='font-family:monospace;'>@=Kategorie:Beispiel.zip=@</span><br /><span style='font-family:monospace;'>&lt;template&gt;: </span>Optional, Anordnung der Platzhalter. Mögliche Platzhalter sind: <span style='font-family:monospace;'>#LINK#, #TYPE#, #SIZE#, #COUNT#</span><br /><span style='font-family:monospace;'>&lt;linktext&gt;: </span>Optional, Text des Downloadlinks.<br /><br />Wird keiner der optionalen Parameter gesetzt <span style='font-family:monospace;'>{FileInfo|&lt;file&gt;}</span>, so wird lediglich der Downloadlink eingefügt.<br /><br /><span style='font-weight:bold'>Dokumentation:</span><br />Eine ausführliche Dokumentation ist auf <span style="font-style:italic">www.devmount.de</span> zu finden (siehe obenstehender Link).
+admin_buttontext        = Admin
+admin_buttondescription = Den Administrationsbereich des Plugins öffnen
+admin_header            = {PARAM1} Dateiliste
+admin_filename          = Dateiname
+admin_filetype          = Dateityp
+admin_filesize          = Dateigröße
+admin_filecount         = Downloads

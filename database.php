@@ -11,7 +11,7 @@
  * @package  PHP_MoziloPlugins
  * @author   HPdesigner <kontakt@devmount.de>
  * @license  GPL v3
- * @version  GIT: v0.x
+ * @version  GIT: v0.1
  * @link     none
  *
  * Plugin created by DEVMOUNT

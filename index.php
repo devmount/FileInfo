@@ -313,6 +313,14 @@ class FileInfo extends Plugin
         $template .= '<div>';
         $config['--template~~'] = $template;
 
+        $config['--admin~~'] = array(
+            'buttontext' =>
+                $this->_admin_lang->getLanguageValue('admin_buttontext'),
+            'description' =>
+                $this->_admin_lang->getLanguageValue('admin_buttondescription'),
+            'datei_admin' => 'admin.php',
+        );
+
         return $config;
     }
 
