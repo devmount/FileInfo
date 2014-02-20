@@ -123,6 +123,21 @@ class Database
     }
 
     /**
+     * delete database file
+     *
+     * @param string $filename file to delete
+     *
+     * @return boolean success
+     */
+    public static function deletefile($filename)
+    {
+        if (!file_exists($filename)) {
+            return false;
+        }
+        return unlink($filename);
+    }
+
+    /**
      * load all data entries
      *
      * @param string $filename file to load data from

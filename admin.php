@@ -157,7 +157,7 @@ class FileInfoAdmin extends FileInfo
             <a
                 class="img-button icon-refresh"
                 title="refresh"
-                onclick="document.location.reload()"
+                onclick="window.location.reload()"
             >
                 Refresh
             </a>
@@ -274,7 +274,10 @@ class FileInfoAdmin extends FileInfo
                             <a
                                 class="img-button icon-reset"
                                 title="reset"
-                                onclick="document.getElementById(\'fileinforeset\').submit()"
+                                onclick="
+                                    if(confirm(\'reset?\'))
+                                    document.getElementById(\'fileinforeset\')
+                                        .submit()"
                             >reset</a>
                             <form
                                 id="fileinfodelete"
@@ -294,13 +297,16 @@ class FileInfoAdmin extends FileInfo
                             <a
                                 class="img-button icon-delete"
                                 title="delete"
-                                onclick="document.getElementById(\'fileinfodelete\').submit()"
+                                onclick="
+                                    if(confirm(\'delete?\'))
+                                    document.getElementById(\'fileinfodelete\')
+                                        .submit()"
                             >delete</a>
                         </td>
                     </tr>';
             }
-            $content .= '</li></ul>';
             $content .= '</table>';
+            $content .= '</li></ul>';
         }
 
         return $content;
@@ -378,8 +384,8 @@ class FileInfoAdmin extends FileInfo
     function checkPost()
     {
         // handle actions
-        $reset = getRequestValue('r',"post",false);
-        $delete = getRequestValue('d',"post",false);
+        $reset = getRequestValue('r', "post", false);
+        $delete = getRequestValue('d', "post", false);
         if ($reset != '') {
             $catfile = $reset;
             return $this->resetCount($catfile);
@@ -393,25 +399,28 @@ class FileInfoAdmin extends FileInfo
     /**
      * resets the download counts of given file to 0
      *
-     * @param  string $catfile file to reset count
+     * @param string $catfile file to reset count
      *
      * @return boolean success
      */
     protected function resetCount($catfile)
     {
-        print_r('reset: ' . $catfile);
+        return Database::saveArray(
+            $this->_self_dir . 'data/' . $catfile . '.php',
+            '0'
+        );
     }
 
     /**
      * deletes the db file of given file
      *
-     * @param  string $catfile file to delete db file
+     * @param string $catfile file to delete db file
      *
      * @return boolean success
      */
     protected function deleteCount($catfile)
     {
-        print_r('delete: ' . $catfile);
+        return Database::deleteFile($this->_self_dir . 'data/' . $catfile . '.php');
     }
 }
 
