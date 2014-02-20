@@ -137,11 +137,22 @@ class FileInfoAdmin extends FileInfo
                 background: #fff;
             }
             .img-button {
-
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                background: url(../plugins/FileInfo/img/icons.png);
+                cursor: pointer;
             }
-            .icon-reset {}
-            .icon-delete {}
-            .icon-refresh {}
+            .icon-refresh {
+                margin: 7px 0 0 12px;
+                background-position: 0 0;
+            }
+            .icon-reset {
+                background-position: -16px 0;
+            }
+            .icon-delete {
+                background-position: -32px 0;
+            }
             </style>
         ';
 
@@ -158,9 +169,7 @@ class FileInfoAdmin extends FileInfo
                 class="img-button icon-refresh"
                 title="refresh"
                 onclick="window.location.reload()"
-            >
-                Refresh
-            </a>
+            >r</a>
             <a href="' . self::PLUGIN_DOCU . '" target="_blank">
                 <img style="float:right;" src="' . self::LOGO_URL . '" />
             </a>
@@ -278,7 +287,7 @@ class FileInfoAdmin extends FileInfo
                                     if(confirm(\'reset?\'))
                                     document.getElementById(\'fileinforeset\')
                                         .submit()"
-                            >reset</a>
+                            ></a>
                             <form
                                 id="fileinfodelete"
                                 action="' . URL_BASE . ADMIN_DIR_NAME . '/index.php"
@@ -301,7 +310,7 @@ class FileInfoAdmin extends FileInfo
                                     if(confirm(\'delete?\'))
                                     document.getElementById(\'fileinfodelete\')
                                         .submit()"
-                            >delete</a>
+                            ></a>
                         </td>
                     </tr>';
             }
