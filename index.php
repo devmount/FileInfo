@@ -44,7 +44,7 @@ require_once "database.php";
 class FileInfo extends Plugin
 {
     // language
-    private $_admin_lang;
+    public $admin_lang;
     private $_cms_lang;
 
     // plugin information
@@ -121,7 +121,7 @@ class FileInfo extends Plugin
             $this->getLink($src, $param_file, $param_linktext), // #LINK#
             $this->getType($file),                              // #TYPE#
             $this->formatFilesize(filesize($url)),              // #SIZE#
-            $this->getCount($param_file),                       // #COUNT#
+            $this->getCount($this->PLUGIN_SELF_DIR . 'data/' . $param_file),                       // #COUNT#
             $this->formatFiledate(filectime($url)),             // #DATE#
         );
 
@@ -151,174 +151,11 @@ class FileInfo extends Plugin
 
         $config = array();
 
-        // get all registered files
-        $catfiles = array_diff(
-            scandir($this->PLUGIN_SELF_DIR . 'data', 1),
-            array('..', '.')
-        );
-
-        // build (category => file1, file2) structure
-        $sortedfiles = array();
-
-        foreach ($catfiles as $catfile) {
-            list($cat, $file) = explode('%3A', $catfile);
-            $sortedfiles[$cat][] = substr($file, 0, -4);
-        }
-
-        // Template CSS
-        $template = '
-            <style>
-            .admin-header {
-                margin: -0.4em -0.8em -5px -0.8em;
-                padding: 10px;
-                background-color: #234567;
-                color: #fff;
-                text-shadow: #000 0 1px 3px;
-            }
-            .admin-header span {
-                font-size:20px;
-                vertical-align: top;
-                padding-top: 3px;
-                display: inline-block;
-            }
-            .admin-subheader {
-                margin: -0.4em -0.8em 5px -0.8em;
-                padding: 5px 9px;
-                background-color: #ddd;
-                color: #111;
-                text-shadow: #fff 0 1px 2px;
-            }
-            .admin-li {
-                background: #eee;
-            }
-            .admin-default {
-                color: #aaa;
-                padding-left: 6px;
-            }
-            .admin-link {
-                text-decoration:none;
-            }
-            .admin-link:hover {
-                color:#666;
-            }
-            .admin-li table tr:hover td {
-                background: #fff;
-            }
-            </style>
-        ';
-
-        // build Template
-        $template .= '
-            <div class="admin-header">
-            <span>'
-                . $this->_admin_lang->getLanguageValue(
-                    'admin_header',
-                    self::PLUGIN_TITLE
-                )
-            . '</span>
-            <a href="' . self::PLUGIN_DOCU . '" target="_blank">
-            <img style="float:right;" src="' . self::LOGO_URL . '" />
-            </a>
-            </div>
-        ';
-
-        // find all categories
-        foreach ($sortedfiles as $cat => $files) {
-            $template .= '
-                </li>
-                <li class="mo-in-ul-li ui-widget-content admin-li">
-                    <div class="admin-subheader">'
-                    . urldecode($cat)
-                    . '</div>
-                    <table width="100%" cellspacing="0" cellpadding="4px">
-                        <colgroup>
-                            <col style="width:*;">
-                            <col style="width:80px;">
-                            <col style="width:80px;">
-                            <col style="width:80px;">
-                        </colgroup>
-                        <tr>
-                            <th>'
-                            . $this->_admin_lang->getLanguageValue('admin_filename')
-                            . '</th>
-                            <th style="text-align:center;">'
-                            . $this->_admin_lang->getLanguageValue('admin_filetype')
-                            . '</th>
-                            <th style="text-align:center;">'
-                            . $this->_admin_lang->getLanguageValue('admin_filesize')
-                            . '</th>
-                            <th style="text-align:center;">'
-                            . $this->_admin_lang->getLanguageValue('admin_filecount')
-                            . '</th>
-                        </tr>
-                ';
-
-            // find all files in current category
-            foreach ($files as $filename) {
-                // get filepaths
-                $url = $CatPage->get_pfadFile($cat, $filename);
-                $src = $CatPage->get_srcFile($cat, $filename);
-
-                // rebuild catfile form
-                $catfile = $cat . '%3A' . $filename;
-
-                // calculate percentage of maximum counts
-                $count = $this->getCount($catfile);
-                $maxcount = $this->getMaxCount();
-                $percentcount = round($count/$maxcount*100, 1);
-
-                // calculate percentage of maximum size
-                $size = filesize($url);
-                $maxsize = $this->getMaxSize();
-                $percentsize = round($size/$maxsize*100, 1);
-
-                $template .= '
-                    <tr>
-                        <td>
-                            <a href="' . $src . '" class="admin-link">'
-                            . urldecode($filename)
-                            . '</a>
-                        </td>
-                        <td style="text-align:center;padding-right:10px;">'
-                            . $this->getType(urldecode($filename))
-                        . '</td>
-                        <td style="text-align:right;padding-right:10px;">
-                            <div style="
-                                padding: 1px 4px;
-                                background: linear-gradient(
-                                    to left,
-                                    #abcdef ' . $percentsize . '%,
-                                    transparent ' . $percentsize . '%
-                                );
-                            ">'
-                            . $this->formatFilesize($size)
-                            . '</div>
-                        </td>
-                        <td>
-                            <div style="
-                                padding: 1px 4px;
-                                background: linear-gradient(
-                                    to right,
-                                    #abcdef ' . $percentcount . '%,
-                                    transparent ' . $percentcount . '%
-                                );
-                            ">'
-                            . $count
-                            . '</div>
-                        </td>
-                    </tr>';
-            }
-            $template .= '</table>';
-        }
-
-        $template .= '<div>';
-        $config['--template~~'] = $template;
-
         $config['--admin~~'] = array(
             'buttontext' =>
-                $this->_admin_lang->getLanguageValue('admin_buttontext'),
+                $this->admin_lang->getLanguageValue('admin_buttontext'),
             'description' =>
-                $this->_admin_lang->getLanguageValue('admin_buttondescription'),
+                $this->admin_lang->getLanguageValue('admin_buttondescription'),
             'datei_admin' => 'admin.php',
         );
 
@@ -333,7 +170,7 @@ class FileInfo extends Plugin
     function getInfo()
     {
         global $ADMIN_CONF;
-        $this->_admin_lang = new Language(
+        $this->admin_lang = new Language(
             $this->PLUGIN_SELF_DIR
             . 'lang/admin_language_'
             . $ADMIN_CONF->get('language')
@@ -343,13 +180,13 @@ class FileInfo extends Plugin
         // build plugin tags
         $tags = array();
         foreach ($this->_plugin_tags as $key => $tag) {
-            $tags[$tag] = $this->_admin_lang->getLanguageValue('tag_' . $key);
+            $tags[$tag] = $this->admin_lang->getLanguageValue('tag_' . $key);
         }
 
         $info = array(
             '<b>' . self::PLUGIN_TITLE . '</b> ' . self::PLUGIN_VERSION,
             self::MOZILO_VERSION,
-            $this->_admin_lang->getLanguageValue(
+            $this->admin_lang->getLanguageValue(
                 'description',
                 htmlspecialchars($this->_plugin_tags['tag']),
                 implode(', ', $this->_marker)
@@ -396,7 +233,7 @@ class FileInfo extends Plugin
     protected function getCount($catfile)
     {
         $count = Database::loadArray(
-            $this->PLUGIN_SELF_DIR . 'data/' . $catfile . '.php'
+            $catfile . '.php'
         );
         return ($count == '') ? '0' : $count;
     }
@@ -461,66 +298,6 @@ class FileInfo extends Plugin
     protected function formatFiledate($tstamp, $format = 'd.m.Y')
     {
         return date($format, $tstamp);
-    }
-
-    /**
-     * finds maximum download number of all files
-     *
-     * @return int maximum download number
-     */
-    protected function getMaxCount()
-    {
-        // get all registered files
-        $catfiles = array_diff(
-            scandir($this->PLUGIN_SELF_DIR . 'data', 1),
-            array('..', '.')
-        );
-
-        // initialize counter
-        $max = 0;
-
-        // compare current max with each download number
-        foreach ($catfiles as $catfile) {
-            $count = intval($this->getCount(substr($catfile, 0, -4)));
-            if ($count > $max) {
-                $max = $count;
-            }
-        }
-
-        return $max;
-    }
-
-    /**
-     * finds maximum filezise of all files
-     *
-     * @return int maximum filesize
-     */
-    protected function getMaxSize()
-    {
-        global $CatPage;
-
-        // get all registered files
-        $catfiles = array_diff(
-            scandir($this->PLUGIN_SELF_DIR . 'data', 1),
-            array('..', '.')
-        );
-
-        // initialize counter
-        $max = 0;
-
-        // compare current max with each download number
-        foreach ($catfiles as $catfile) {
-            list($cat, $file) = explode('%3A', $catfile);
-            $filename = substr($file, 0, -4);
-            $url = $CatPage->get_pfadFile($cat, $filename);
-
-            $size = intval(filesize($url));
-            if ($size > $max) {
-                $max = $size;
-            }
-        }
-
-        return $max;
     }
 
 }
