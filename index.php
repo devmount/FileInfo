@@ -118,11 +118,16 @@ class FileInfo extends Plugin
 
         // set type contents
         $types = array(
-            $this->getLink($src, $param_file, $param_linktext), // #LINK#
-            $this->getType($file),                              // #TYPE#
-            $this->formatFilesize(filesize($url)),              // #SIZE#
-            $this->getCount($this->PLUGIN_SELF_DIR . 'data/' . $param_file),                       // #COUNT#
-            $this->formatFiledate(filectime($url)),             // #DATE#
+            // #LINK#
+            $this->getLink($src, $param_file, $param_linktext),
+            // #TYPE#
+            $this->getType($file),
+            // #SIZE#
+            $this->formatFilesize(filesize($url)),
+            // #COUNT#
+            $this->getCount($this->PLUGIN_SELF_DIR . 'data/' . $param_file),
+            // #DATE#
+            $this->formatFiledate(filectime($url)),
         );
 
         // initialize return content, begin plugin content
