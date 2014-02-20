@@ -87,74 +87,15 @@ class FileInfoAdmin extends FileInfo
             $sortedfiles[$cat][] = substr($file, 0, -4);
         }
 
-        // Template CSS
-        $content = '
-            <style>
-            .admin-header {
-                position: relative;
-                width: 96%;
-                margin: 0 auto;
-                padding: 10px;
-                background-color: #234567;
-                color: #fff;
-                text-shadow: #000 0 1px 3px;
-            }
-            .admin-header span {
-                font-size:20px;
-                vertical-align: top;
-                padding-top: 3px;
-                display: inline-block;
-            }
-            .admin-subheader {
-                margin: -0.4em 0 5px -0.8em;
-                padding: 5px 9px;
-                background-color: #ddd;
-                color: #111;
-                text-shadow: #fff 0 1px 2px;
-            }
-            .admin-li {
-                background: #eee;
-            }
-            .admin-default {
-                color: #aaa;
-                padding-left: 6px;
-            }
-            .admin-link {
-                text-decoration:none;
-            }
-            .admin-link:hover {
-                color:#666;
-            }
-            ul {
-                width: 98%;
-                padding: 0;
-                margin: 0 auto;
-            }
-            .admin-li table {
-                width: 100%;
-            }
-            .admin-li table tr:hover td {
-                background: #fff;
-            }
-            .img-button {
-                display: inline-block;
-                width: 16px;
-                height: 16px;
-                background: url(../plugins/FileInfo/img/icons.png);
-                cursor: pointer;
-            }
-            .icon-refresh {
-                margin: 7px 0 0 12px;
-                background-position: 0 0;
-            }
-            .icon-reset {
-                background-position: -16px 0;
-            }
-            .icon-delete {
-                background-position: -32px 0;
-            }
-            </style>
-        ';
+        // read admin.css
+        $admin_css = '';
+        $lines = file('../plugins/FileInfo/admin.css');
+        foreach ($lines as $line_num => $line) {
+            $admin_css .= trim($line);
+        }
+
+        // add template CSS
+        $content = '<style>' . $admin_css . '</style>';
 
         // build Template
         $content .= '
@@ -169,7 +110,7 @@ class FileInfoAdmin extends FileInfo
                 class="img-button icon-refresh"
                 title="refresh"
                 onclick="window.location.reload()"
-            >r</a>
+            ></a>
             <a href="' . self::PLUGIN_DOCU . '" target="_blank">
                 <img style="float:right;" src="' . self::LOGO_URL . '" />
             </a>
