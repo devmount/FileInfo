@@ -7,3 +7,4 @@ admin_filename          = Dateiname
 admin_filetype          = Dateityp
 admin_filesize          = Dateigröße
 admin_filecount         = Downloads
+admin_action            = Aktion

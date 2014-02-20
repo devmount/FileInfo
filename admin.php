@@ -24,8 +24,11 @@ if (!defined('IS_ADMIN') or !IS_ADMIN) {
     die();
 }
 
-// instantiate FileInfoAdmin class and return its content
+// instantiate FileInfoAdmin class
 $FileInfoAdmin = new FileInfoAdmin($plugin);
+// handle post input
+$FileInfoAdmin->checkPost();
+// return admin content
 return $FileInfoAdmin->getContentAdmin();
 
 /**
@@ -45,6 +48,8 @@ class FileInfoAdmin extends FileInfo
     private $_settings;
     // PLUGIN_SELF_DIR from FileInfo
     private $_self_dir;
+    // PLUGIN_SELF_URL from FileInfo
+    private $_self_url;
 
     /**
      * constructor
@@ -56,6 +61,7 @@ class FileInfoAdmin extends FileInfo
         $this->admin_lang = $plugin->admin_lang;
         $this->_settings = $plugin->settings;
         $this->_self_dir = $plugin->PLUGIN_SELF_DIR;
+        $this->_self_url = $plugin->PLUGIN_SELF_URL;
     }
 
     /**
@@ -82,7 +88,7 @@ class FileInfoAdmin extends FileInfo
         }
 
         // Template CSS
-        $template = '
+        $content = '
             <style>
             .admin-header {
                 position: relative;
@@ -130,11 +136,17 @@ class FileInfoAdmin extends FileInfo
             .admin-li table tr:hover td {
                 background: #fff;
             }
+            .img-button {
+
+            }
+            .icon-reset {}
+            .icon-delete {}
+            .icon-refresh {}
             </style>
         ';
 
         // build Template
-        $template .= '
+        $content .= '
             <div class="admin-header ">
             <span>'
                 . $this->admin_lang->getLanguageValue(
@@ -142,15 +154,22 @@ class FileInfoAdmin extends FileInfo
                     self::PLUGIN_TITLE
                 )
             . '</span>
+            <a
+                class="img-button icon-refresh"
+                title="refresh"
+                onclick="document.location.reload()"
+            >
+                Refresh
+            </a>
             <a href="' . self::PLUGIN_DOCU . '" target="_blank">
-            <img style="float:right;" src="' . self::LOGO_URL . '" />
+                <img style="float:right;" src="' . self::LOGO_URL . '" />
             </a>
             </div>
         ';
 
         // find all categories
         foreach ($sortedfiles as $cat => $files) {
-            $template .= '
+            $content .= '
             <ul>
                 <li class="mo-in-ul-li ui-widget-content admin-li">
                     <div class="admin-subheader">'
@@ -159,6 +178,7 @@ class FileInfoAdmin extends FileInfo
                     <table cellspacing="0" cellpadding="4px">
                         <colgroup>
                             <col style="width:*;">
+                            <col style="width:80px;">
                             <col style="width:80px;">
                             <col style="width:80px;">
                             <col style="width:80px;">
@@ -175,6 +195,9 @@ class FileInfoAdmin extends FileInfo
                             . '</th>
                             <th style="text-align:center;">'
                             . $this->admin_lang->getLanguageValue('admin_filecount')
+                            . '</th>
+                            <th>'
+                            . $this->admin_lang->getLanguageValue('admin_action')
                             . '</th>
                         </tr>
                 ';
@@ -198,7 +221,7 @@ class FileInfoAdmin extends FileInfo
                 $maxsize = $this->getMaxSize();
                 $percentsize = round($size/$maxsize*100, 1);
 
-                $template .= '
+                $content .= '
                     <tr>
                         <td>
                             <a href="' . $src . '" class="admin-link">'
@@ -232,21 +255,54 @@ class FileInfoAdmin extends FileInfo
                             . $count
                             . '</div>
                         </td>
+                        <td>
+                            <form
+                                id="fileinforeset"
+                                action="' . URL_BASE . ADMIN_DIR_NAME . '/index.php"
+                                method="post"
+                            >
+                                <input type="hidden" name="pluginadmin"
+                                    value="' . PLUGINADMIN . '"
+                                />
+                                <input type="hidden" name="action"
+                                    value="' . ACTION . '"
+                                />
+                                <input type="hidden" name="r"
+                                    value="' . $catfile . '"
+                                />
+                            </form>
+                            <a
+                                class="img-button icon-reset"
+                                title="reset"
+                                onclick="document.getElementById(\'fileinforeset\').submit()"
+                            >reset</a>
+                            <form
+                                id="fileinfodelete"
+                                action="' . URL_BASE . ADMIN_DIR_NAME . '/index.php"
+                                method="post"
+                            >
+                                <input type="hidden" name="pluginadmin"
+                                    value="' . PLUGINADMIN . '"
+                                />
+                                <input type="hidden" name="action"
+                                    value="' . ACTION . '"
+                                />
+                                <input type="hidden" name="d"
+                                    value="' . $catfile . '"
+                                />
+                            </form>
+                            <a
+                                class="img-button icon-delete"
+                                title="delete"
+                                onclick="document.getElementById(\'fileinfodelete\').submit()"
+                            >delete</a>
+                        </td>
                     </tr>';
             }
-            $template .= '</li></ul>';
-            $template .= '</table>';
+            $content .= '</li></ul>';
+            $content .= '</table>';
         }
 
-
-        $content = '';
-        $content .= '
-            <input
-                type="button"
-                value="Reload Page"
-                onClick="window.location.reload()"
-            />';
-        $content .= $template;
         return $content;
     }
 
@@ -312,6 +368,50 @@ class FileInfoAdmin extends FileInfo
         }
 
         return $max;
+    }
+
+    /**
+     * checks and handles post variables
+     *
+     * @return boolean success
+     */
+    function checkPost()
+    {
+        // handle actions
+        $reset = getRequestValue('r',"post",false);
+        $delete = getRequestValue('d',"post",false);
+        if ($reset != '') {
+            $catfile = $reset;
+            return $this->resetCount($catfile);
+        }
+        if ($delete != '') {
+            $catfile = $delete;
+            return $this->deleteCount($catfile);
+        }
+    }
+
+    /**
+     * resets the download counts of given file to 0
+     *
+     * @param  string $catfile file to reset count
+     *
+     * @return boolean success
+     */
+    protected function resetCount($catfile)
+    {
+        print_r('reset: ' . $catfile);
+    }
+
+    /**
+     * deletes the db file of given file
+     *
+     * @param  string $catfile file to delete db file
+     *
+     * @return boolean success
+     */
+    protected function deleteCount($catfile)
+    {
+        print_r('delete: ' . $catfile);
     }
 }
 
