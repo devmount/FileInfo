@@ -1,14 +1,56 @@
-<?php if(!defined('IS_ADMIN') or !IS_ADMIN) die();
+<?php
 
+/**
+ * moziloCMS Plugin: FileInfoAdmin
+ *
+ * Offers a list of all registered files with an overview of information
+ * and administration tools like resetting or deleting file infos.
+ *
+ * PHP version 5
+ *
+ * @category PHP
+ * @package  PHP_MoziloPlugins
+ * @author   HPdesigner <kontakt@devmount.de>
+ * @license  GPL v3
+ * @link     https://github.com/devmount/FileInfo
+ *
+ * Plugin created by DEVMOUNT
+ * www.devmount.de
+ *
+ */
+
+// only allow moziloCMS administration environment
+if (!defined('IS_ADMIN') or !IS_ADMIN) {
+    die();
+}
+
+// instantiate FileInfoAdmin class and return its content
 $FileInfoAdmin = new FileInfoAdmin($plugin);
 return $FileInfoAdmin->getContentAdmin();
 
-class FileInfoAdmin extends FileInfo {
-
+/**
+ * FileInfoAdmin Class
+ *
+ * @category PHP
+ * @package  PHP_MoziloPlugins
+ * @author   HPdesigner <kontakt@devmount.de>
+ * @license  GPL v3
+ * @link     https://github.com/devmount/FileInfo
+ */
+class FileInfoAdmin extends FileInfo
+{
+    // language
     public $admin_lang;
+    // plugin settings
     private $_settings;
+    // PLUGIN_SELF_DIR from FileInfo
     private $_self_dir;
 
+    /**
+     * constructor
+     *
+     * @param object $plugin FileInfo plugin object
+     */
     function FileInfoAdmin($plugin)
     {
         $this->admin_lang = $plugin->admin_lang;
@@ -16,6 +58,11 @@ class FileInfoAdmin extends FileInfo {
         $this->_self_dir = $plugin->PLUGIN_SELF_DIR;
     }
 
+    /**
+     * creates plugin administration area content
+     *
+     * @return string HTML output
+     */
     function getContentAdmin()
     {
         global $CatPage;
@@ -193,7 +240,12 @@ class FileInfoAdmin extends FileInfo {
 
 
         $content = '';
-        $content .= '<input type="button" value="Reload Page" onClick="window.location.reload()">';
+        $content .= '
+            <input
+                type="button"
+                value="Reload Page"
+                onClick="window.location.reload()"
+            />';
         $content .= $template;
         return $content;
     }
@@ -216,8 +268,10 @@ class FileInfoAdmin extends FileInfo {
 
         // compare current max with each download number
         foreach ($catfiles as $catfile) {
-            $count = intval($this->getCount(
-                $this->_self_dir . 'data/' . substr($catfile, 0, -4))
+            $count = intval(
+                $this->getCount(
+                    $this->_self_dir . 'data/' . substr($catfile, 0, -4)
+                )
             );
             if ($count > $max) {
                 $max = $count;
