@@ -99,7 +99,7 @@ class FileInfoAdmin extends FileInfo
 
         // build Template
         $content .= '
-            <div class="admin-header ">
+            <div class="admin-header">
             <span>'
                 . $this->admin_lang->getLanguageValue(
                     'admin_header',
@@ -108,8 +108,9 @@ class FileInfoAdmin extends FileInfo
             . '</span>
             <a
                 class="img-button icon-refresh"
-                title="refresh"
-                onclick="window.location.reload()"
+                title="'
+                . $this->admin_lang->getLanguageValue('icon_refresh')
+                . '" onclick="window.location.reload()"
             ></a>
             <a href="' . self::PLUGIN_DOCU . '" target="_blank">
                 <img style="float:right;" src="' . self::LOGO_URL . '" />
@@ -131,7 +132,7 @@ class FileInfoAdmin extends FileInfo
                             <col style="width:80px;">
                             <col style="width:80px;">
                             <col style="width:80px;">
-                            <col style="width:80px;">
+                            <col style="width:60px;">
                         </colgroup>
                         <tr>
                             <th>'
@@ -223,11 +224,16 @@ class FileInfoAdmin extends FileInfo
                             </form>
                             <a
                                 class="img-button icon-reset"
-                                title="reset"
-                                onclick="
-                                    if(confirm(\'reset?\'))
-                                    document.getElementById(\'fileinforeset\')
-                                        .submit()"
+                                title="'
+                                . $this->admin_lang->getLanguageValue('icon_reset')
+                                . '"
+                                onclick="if(confirm(\''
+                                . $this->admin_lang->getLanguageValue(
+                                    'confirm_reset'
+                                )
+                                . '\'))
+                                document.getElementById(\'fileinforeset\')
+                                    .submit()"
                             ></a>
                             <form
                                 id="fileinfodelete"
@@ -246,11 +252,16 @@ class FileInfoAdmin extends FileInfo
                             </form>
                             <a
                                 class="img-button icon-delete"
-                                title="delete"
-                                onclick="
-                                    if(confirm(\'delete?\'))
-                                    document.getElementById(\'fileinfodelete\')
-                                        .submit()"
+                                title="'
+                                . $this->admin_lang->getLanguageValue('icon_delete')
+                                . '"
+                                onclick="if(confirm(\''
+                                . $this->admin_lang->getLanguageValue(
+                                    'confirm_delete'
+                                )
+                                . '\'))
+                                document.getElementById(\'fileinfodelete\')
+                                    .submit()"
                             ></a>
                         </td>
                     </tr>';
