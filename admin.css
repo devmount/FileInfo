@@ -67,6 +67,9 @@
 }
 
 /* messages */
+.admin-msg .FileInfoError {
+    margin: 6px auto;
+}
 .FileInfoError {
     display: table;
     margin: 2px 0;
@@ -84,6 +87,9 @@
     display: table-cell;
     padding: 2px 4px;
     color: #f44;
+}
+.admin-msg .FileInfoSuccess {
+    margin: 6px auto;
 }
 .FileInfoSuccess {
     display: table;

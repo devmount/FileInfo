@@ -91,7 +91,7 @@ class FileInfoAdmin extends FileInfo
             }
         }
         if (isset($postresult['delete'])) {
-            if ($postresult['reset']) {
+            if ($postresult['delete']) {
                 $msg = $this->throwSuccess(
                     $this->admin_lang->getLanguageValue('msg_success_delete')
                 );
@@ -160,7 +160,9 @@ class FileInfoAdmin extends FileInfo
         ';
 
         // add possible message to output content
-        $content .= $msg;
+        if ($msg != '') {
+            $content .= '<div class="admin-msg">' . $msg . '</div>';
+        }
 
         // find all categories
         foreach ($sortedfiles as $cat => $files) {
