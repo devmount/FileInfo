@@ -27,9 +27,9 @@ if (!defined('IS_ADMIN') or !IS_ADMIN) {
 // instantiate FileInfoAdmin class
 $FileInfoAdmin = new FileInfoAdmin($plugin);
 // handle post input
-$FileInfoAdmin->checkPost();
+$postresult = $FileInfoAdmin->checkPost();
 // return admin content
-return $FileInfoAdmin->getContentAdmin();
+return $FileInfoAdmin->getContentAdmin($postresult);
 
 /**
  * FileInfoAdmin Class
@@ -67,11 +67,40 @@ class FileInfoAdmin extends FileInfo
     /**
      * creates plugin administration area content
      *
+     * $param array $postresult result of post action
+     *
      * @return string HTML output
      */
-    function getContentAdmin()
+    function getContentAdmin($postresult)
     {
         global $CatPage;
+
+        // initialize message content
+        $msg = '';
+
+        // handle postresult
+        if (isset($postresult['reset'])) {
+            if ($postresult['reset']) {
+                $msg = $this->throwSuccess(
+                    $this->admin_lang->getLanguageValue('msg_success_reset')
+                );
+            } else {
+                $msg = $this->throwError(
+                    $this->admin_lang->getLanguageValue('msg_error_reset')
+                );
+            }
+        }
+        if (isset($postresult['delete'])) {
+            if ($postresult['reset']) {
+                $msg = $this->throwSuccess(
+                    $this->admin_lang->getLanguageValue('msg_success_delete')
+                );
+            } else {
+                $msg = $this->throwError(
+                    $this->admin_lang->getLanguageValue('msg_error_delete')
+                );
+            }
+        }
 
         // get all registered files
         $catfiles = array_diff(
@@ -129,6 +158,9 @@ class FileInfoAdmin extends FileInfo
             </a>
             </div>
         ';
+
+        // add possible message to output content
+        $content .= $msg;
 
         // find all categories
         foreach ($sortedfiles as $cat => $files) {
@@ -197,6 +229,8 @@ class FileInfoAdmin extends FileInfo
 
             // find all files in current category
             foreach ($files as $filename) {
+                $formid = rand();
+
                 // get filepaths
                 $url = $CatPage->get_pfadFile($cat, $filename);
                 $src = $CatPage->get_srcFile($cat, $filename);
@@ -207,12 +241,16 @@ class FileInfoAdmin extends FileInfo
                 // calculate percentage of maximum counts
                 $count = $this->getCount($this->_self_dir . 'data/' . $catfile);
                 $maxcount = $this->getMaxCount();
-                $percentcount = round($count/$maxcount*100, 1);
+                $percentcount = ($maxcount == 0)
+                    ? 0
+                    : round($count/$maxcount*100, 1);
 
                 // calculate percentage of maximum size
                 $size = filesize($url);
                 $maxsize = $this->getMaxSize();
-                $percentsize = round($size/$maxsize*100, 1);
+                $percentsize = ($maxsize == 0)
+                    ? 0
+                    : round($size/$maxsize*100, 1);
 
                 $content .= '
                     <tr>
@@ -256,7 +294,7 @@ class FileInfoAdmin extends FileInfo
                         </td>
                         <td>
                             <form
-                                id="fileinforeset"
+                                id="' . $formid . 'r"
                                 action="' . URL_BASE . ADMIN_DIR_NAME . '/index.php"
                                 method="post"
                             >
@@ -281,11 +319,11 @@ class FileInfoAdmin extends FileInfo
                                     urldecode($filename)
                                 )
                                 . '\'))
-                                document.getElementById(\'fileinforeset\')
+                                document.getElementById(\'' . $formid . 'r\')
                                     .submit()"
                             ></a>
                             <form
-                                id="fileinfodelete"
+                                id="' . $formid . 'd"
                                 action="' . URL_BASE . ADMIN_DIR_NAME . '/index.php"
                                 method="post"
                             >
@@ -310,7 +348,7 @@ class FileInfoAdmin extends FileInfo
                                     urldecode($filename)
                                 )
                                 . '\'))
-                                document.getElementById(\'fileinfodelete\')
+                                document.getElementById(\'' . $formid . 'd\')
                                     .submit()"
                             ></a>
                         </td>
@@ -394,17 +432,22 @@ class FileInfoAdmin extends FileInfo
      */
     function checkPost()
     {
+        // initialize return array
+        $success = array();
+
         // handle actions
         $reset = getRequestValue('r', "post", false);
         $delete = getRequestValue('d', "post", false);
         if ($reset != '') {
             $catfile = $reset;
-            return $this->resetCount($catfile);
+            $success['reset'] = $this->resetCount($catfile);
         }
         if ($delete != '') {
             $catfile = $delete;
-            return $this->deleteCount($catfile);
+            $success['delete'] = $this->deleteCount($catfile);
         }
+
+        return $success;
     }
 
     /**
