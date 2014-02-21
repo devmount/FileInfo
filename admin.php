@@ -145,7 +145,8 @@ class FileInfoAdmin extends FileInfo
                                 3: { sorter: \'digit\' },
                                 4: { sorter: \'digit\' },
                                 5: { sorter: false }
-                            }
+                            },
+                            sortList: [[4,1]]
                         });
                     }
                 );
