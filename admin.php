@@ -97,6 +97,30 @@ class FileInfoAdmin extends FileInfo
         // add template CSS
         $content = '<style>' . $admin_css . '</style>';
 
+        // add tablesorter js
+        $content .= '
+            <script
+                type="text/javascript"
+                src="../plugins/FileInfo/js/jquery.tablesorter.min.js"
+            >
+            </script>
+            <script language="Javascript" type="text/javascript">
+                $(document).ready(function()
+                    {
+                        $("#fileInfoList").tablesorter({
+                            headers: {
+                                0: { sorter: \'text\' },
+                                1: { sorter: \'text\' },
+                                2: { sorter: \'isoDate\' },
+                                3: { sorter: \'digit\' },
+                                4: { sorter: \'digit\' },
+                                5: { sorter: false }
+                            }
+                        });
+                    }
+                );
+            </script>
+        ';
         // build Template
         $content .= '
             <div class="admin-header">
@@ -126,7 +150,12 @@ class FileInfoAdmin extends FileInfo
                     <div class="admin-subheader">'
                     . urldecode($cat)
                     . '</div>
-                    <table cellspacing="0" cellpadding="4px">
+                    <table
+                        cellspacing="0"
+                        cellpadding="4px"
+                        id="fileInfoList"
+                        class="tablesorter"
+                    >
                         <colgroup>
                             <col style="width:*;">
                             <col style="width:80px;">
@@ -135,26 +164,29 @@ class FileInfoAdmin extends FileInfo
                             <col style="width:80px;">
                             <col style="width:60px;">
                         </colgroup>
+                        <thead>
                         <tr>
                             <th>'
                             . $this->admin_lang->getLanguageValue('admin_filename')
                             . '</th>
-                            <th style="text-align:center;">'
+                            <th>'
                             . $this->admin_lang->getLanguageValue('admin_filetype')
                             . '</th>
-                            <th style="text-align:center;">'
+                            <th>'
                             . $this->admin_lang->getLanguageValue('admin_filedate')
                             . '</th>
-                            <th style="text-align:center;">'
+                            <th class="sorter-digit">'
                             . $this->admin_lang->getLanguageValue('admin_filesize')
                             . '</th>
-                            <th style="text-align:center;">'
+                            <th>'
                             . $this->admin_lang->getLanguageValue('admin_filecount')
                             . '</th>
                             <th>'
                             . $this->admin_lang->getLanguageValue('admin_action')
                             . '</th>
                         </tr>
+                        </thead>
+                        <tbody>
                 ';
 
             // find all files in current category
@@ -278,7 +310,7 @@ class FileInfoAdmin extends FileInfo
                         </td>
                     </tr>';
             }
-            $content .= '</table>';
+            $content .= '</tbody></table>';
             $content .= '</li></ul>';
         }
 
