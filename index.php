@@ -433,7 +433,22 @@ class FileInfo extends Plugin
     protected function throwError($text)
     {
         return '<div class="' . self::PLUGIN_TITLE . 'Error">'
-            . '<div>' . $this->_cms_lang->getLanguageValue('error') . '</div>'
+            . '<div>' . $this->admin_lang->getLanguageValue('error') . '</div>'
+            . '<span>' . $text. '</span>'
+            . '</div>';
+    }
+
+    /**
+     * throws styled success message
+     *
+     * @param string $text Content of success message
+     *
+     * @return string HTML content
+     */
+    protected function throwSuccess($text)
+    {
+        return '<div class="' . self::PLUGIN_TITLE . 'Success">'
+            . '<div>' . $this->admin_lang->getLanguageValue('success') . '</div>'
             . '<span>' . $text. '</span>'
             . '</div>';
     }
