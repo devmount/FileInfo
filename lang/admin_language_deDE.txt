@@ -8,6 +8,7 @@ index_header            = {PARAM1} Plugin Konfiguration
 admin_header            = {PARAM1} Dateiliste
 admin_filename          = Dateiname
 admin_filetype          = Dateityp
+admin_filedate          = Datum
 admin_filesize          = Dateigröße
 admin_filecount         = Downloads
 admin_action            = Aktion

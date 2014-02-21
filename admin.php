@@ -132,6 +132,7 @@ class FileInfoAdmin extends FileInfo
                             <col style="width:80px;">
                             <col style="width:80px;">
                             <col style="width:80px;">
+                            <col style="width:80px;">
                             <col style="width:60px;">
                         </colgroup>
                         <tr>
@@ -140,6 +141,9 @@ class FileInfoAdmin extends FileInfo
                             . '</th>
                             <th style="text-align:center;">'
                             . $this->admin_lang->getLanguageValue('admin_filetype')
+                            . '</th>
+                            <th style="text-align:center;">'
+                            . $this->admin_lang->getLanguageValue('admin_filedate')
                             . '</th>
                             <th style="text-align:center;">'
                             . $this->admin_lang->getLanguageValue('admin_filesize')
@@ -181,6 +185,12 @@ class FileInfoAdmin extends FileInfo
                         </td>
                         <td style="text-align:center;padding-right:10px;">'
                             . $this->getType(urldecode($filename))
+                        . '</td>
+                        <td style="text-align:center;padding-right:10px;">'
+                            . $this->formatFiledate(
+                                filectime($url),
+                                $this->_settings->get('date')
+                            )
                         . '</td>
                         <td style="text-align:right;padding-right:10px;">
                             <div style="
