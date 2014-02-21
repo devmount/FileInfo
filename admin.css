@@ -1,4 +1,5 @@
-.admin-header, .index-header {
+.admin-header,
+.index-header {
     position: relative;
     width: 96%;
     margin: 0 auto;
@@ -11,13 +12,15 @@
     margin: -0.4em -0.8em -5px -0.8em;
     width: 100%;
 }
-.admin-header span, .index-header span {
+.admin-header span,
+.index-header span {
     font-size:20px;
     vertical-align: top;
     padding-top: 3px;
     display: inline-block;
 }
-.admin-subheader, .index-subheader {
+.admin-subheader,
+.index-subheader {
     margin: -0.4em 0 5px -0.8em;
     padding: 5px 9px;
     background-color: #ddd;
@@ -45,12 +48,6 @@
     padding: 0;
     margin: 0 auto;
 }
-.admin-li table {
-    width: 100%;
-}
-.admin-li table tr:hover td {
-    background: #fff;
-}
 .img-button {
     display: inline-block;
     width: 16px;
@@ -70,6 +67,21 @@
 }
 
 /* tablesorter */
+table.tablesorter {
+    width: 100%;
+}
+table.tablesorter tr:nth-child(even) td {
+    background: #e2e2e2;
+}
+table.tablesorter tr:hover td {
+    background: #fff;
+}
+table.tablesorter thead th {
+    background-color: #234567;
+    color: #fff;
+    text-shadow: #000 0 1px 3px;
+    border-bottom: 3px solid #234567;
+}
 table.tablesorter thead tr .header {
     background-image: url(../plugins/FileInfo/img/bg.gif);
     background-repeat: no-repeat;
@@ -82,6 +94,7 @@ table.tablesorter thead tr .headerSortUp {
 table.tablesorter thead tr .headerSortDown {
     background-image: url(../plugins/FileInfo/img/desc.gif);
 }
-table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
-    background-color: #abcdef;
+table.tablesorter thead tr .headerSortDown,
+table.tablesorter thead tr .headerSortUp {
+    border-bottom: 3px solid #abcdef;
 }

@@ -104,22 +104,6 @@ class FileInfoAdmin extends FileInfo
                 src="../plugins/FileInfo/js/jquery.tablesorter.min.js"
             >
             </script>
-            <script language="Javascript" type="text/javascript">
-                $(document).ready(function()
-                    {
-                        $("#fileInfoList").tablesorter({
-                            headers: {
-                                0: { sorter: \'text\' },
-                                1: { sorter: \'text\' },
-                                2: { sorter: \'isoDate\' },
-                                3: { sorter: \'digit\' },
-                                4: { sorter: \'digit\' },
-                                5: { sorter: false }
-                            }
-                        });
-                    }
-                );
-            </script>
         ';
         // build Template
         $content .= '
@@ -148,7 +132,24 @@ class FileInfoAdmin extends FileInfo
 
         // find all categories
         foreach ($sortedfiles as $cat => $files) {
+            $id = rand();
             $content .= '
+            <script language="Javascript" type="text/javascript">
+                $(document).ready(function()
+                    {
+                        $("#' . $id . '").tablesorter({
+                            headers: {
+                                0: { sorter: \'text\' },
+                                1: { sorter: \'text\' },
+                                2: { sorter: \'isoDate\' },
+                                3: { sorter: \'digit\' },
+                                4: { sorter: \'digit\' },
+                                5: { sorter: false }
+                            }
+                        });
+                    }
+                );
+            </script>
             <ul class="fileinfo-ul">
                 <li class="mo-in-ul-li ui-widget-content admin-li">
                     <div class="admin-subheader">'
@@ -157,7 +158,7 @@ class FileInfoAdmin extends FileInfo
                     <table
                         cellspacing="0"
                         cellpadding="4px"
-                        id="fileInfoList"
+                        id="' . $id . '"
                         class="tablesorter"
                     >
                         <colgroup>
@@ -179,7 +180,7 @@ class FileInfoAdmin extends FileInfo
                             <th>'
                             . $this->admin_lang->getLanguageValue('admin_filedate')
                             . '</th>
-                            <th class="sorter-digit">'
+                            <th>'
                             . $this->admin_lang->getLanguageValue('admin_filesize')
                             . '</th>
                             <th>'
