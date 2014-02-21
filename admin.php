@@ -134,7 +134,11 @@ class FileInfoAdmin extends FileInfo
                 class="img-button icon-refresh"
                 title="'
                 . $this->admin_lang->getLanguageValue('icon_refresh')
-                . '" onclick="window.location.reload()"
+                . '" onclick="window.location
+                    = (String(window.location).indexOf(\'?\') != -1)
+                    ? window.location
+                    : String(window.location)
+                    + \'?nojs=true&pluginadmin=FileInfo&action=plugins&multi=true\';"
             ></a>
             <a href="' . self::PLUGIN_DOCU . '" target="_blank">
                 <img style="float:right;" src="' . self::LOGO_URL . '" />
