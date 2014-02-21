@@ -121,7 +121,7 @@ class FileInfoAdmin extends FileInfo
         // find all categories
         foreach ($sortedfiles as $cat => $files) {
             $content .= '
-            <ul>
+            <ul class="fileinfo-ul">
                 <li class="mo-in-ul-li ui-widget-content admin-li">
                     <div class="admin-subheader">'
                     . urldecode($cat)
@@ -229,7 +229,8 @@ class FileInfoAdmin extends FileInfo
                                 . '"
                                 onclick="if(confirm(\''
                                 . $this->admin_lang->getLanguageValue(
-                                    'confirm_reset'
+                                    'confirm_reset',
+                                    urldecode($filename)
                                 )
                                 . '\'))
                                 document.getElementById(\'fileinforeset\')
@@ -257,7 +258,8 @@ class FileInfoAdmin extends FileInfo
                                 . '"
                                 onclick="if(confirm(\''
                                 . $this->admin_lang->getLanguageValue(
-                                    'confirm_delete'
+                                    'confirm_delete',
+                                    urldecode($filename)
                                 )
                                 . '\'))
                                 document.getElementById(\'fileinfodelete\')

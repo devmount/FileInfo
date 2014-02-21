@@ -64,6 +64,28 @@ class FileInfo extends Plugin
     const LOGO_URL = 'http://media.devmount.de/logo_pluginconf.png';
 
     /**
+     * set configuration elements, their default values and their configuration
+     * parameters
+     *
+     * @var array $_confdefault
+     *      text     => default, type, maxlength, size, regex
+     *      textarea => default, type, cols, rows, regex
+     *      password => default, type, maxlength, size, regex, saveasmd5
+     *      check    => default, type
+     *      radio    => default, type, descriptions
+     *      select   => default, type, descriptions, multiselect
+     */
+    private $_confdefault = array(
+        'date' => array(
+            'd.m.Y',
+            'text',
+            '100',
+            '5',
+            '',
+        ),
+    );
+
+    /**
      * creates plugin content
      *
      * @param string $value Parameter divided by '|'
@@ -82,6 +104,14 @@ class FileInfo extends Plugin
             . $CMS_CONF->get('cmslanguage')
             . '.txt'
         );
+
+        // get conf and set default
+        $conf = array();
+        foreach ($this->_confdefault as $elem => $default) {
+            $conf[$elem] = ($this->settings->get($elem) == '')
+                ? $default[0]
+                : $this->settings->get($elem);
+        }
 
         // get params
         list($param_file, $param_template, $param_linktext)
@@ -127,7 +157,7 @@ class FileInfo extends Plugin
             // #COUNT#
             $this->getCount($this->PLUGIN_SELF_DIR . 'data/' . $param_file),
             // #DATE#
-            $this->formatFiledate(filectime($url)),
+            $this->formatFiledate(filectime($url), $conf['date']),
         );
 
         // initialize return content, begin plugin content
@@ -156,6 +186,7 @@ class FileInfo extends Plugin
 
         $config = array();
 
+        // create button to administration area
         $config['--admin~~'] = array(
             'buttontext' =>
                 $this->admin_lang->getLanguageValue('admin_buttontext'),
@@ -164,6 +195,138 @@ class FileInfo extends Plugin
             'datei_admin' => 'admin.php',
         );
 
+        // read configuration values
+        foreach ($this->_confdefault as $key => $value) {
+            // handle each form type
+            switch ($value[1]) {
+            case 'text':
+                $config[$key] = $this->confText(
+                    $this->admin_lang->getLanguageValue('config_' . $key),
+                    $value[2],
+                    $value[3],
+                    $value[4],
+                    $this->admin_lang->getLanguageValue(
+                        'config_' . $key . '_error'
+                    )
+                );
+                break;
+
+            case 'textarea':
+                $config[$key] = $this->confTextarea(
+                    $this->admin_lang->getLanguageValue('config_' . $key),
+                    $value[2],
+                    $value[3],
+                    $value[4],
+                    $this->admin_lang->getLanguageValue(
+                        'config_' . $key . '_error'
+                    )
+                );
+                break;
+
+            case 'password':
+                $config[$key] = $this->confPassword(
+                    $this->admin_lang->getLanguageValue('config_' . $key),
+                    $value[2],
+                    $value[3],
+                    $value[4],
+                    $this->admin_lang->getLanguageValue(
+                        'config_' . $key . '_error'
+                    ),
+                    $value[5]
+                );
+                break;
+
+            case 'check':
+                $config[$key] = $this->confCheck(
+                    $this->admin_lang->getLanguageValue('config_' . $key)
+                );
+                break;
+
+            case 'radio':
+                $descriptions = array();
+                foreach ($value[2] as $label) {
+                    $descriptions[$label] = $this->admin_lang->getLanguageValue(
+                        'config_' . $key . '_' . $label
+                    );
+                }
+                $config[$key] = $this->confRadio(
+                    $this->admin_lang->getLanguageValue('config_' . $key),
+                    $descriptions
+                );
+                break;
+
+            case 'select':
+                $descriptions = array();
+                foreach ($value[2] as $label) {
+                    $descriptions[$label] = $this->admin_lang->getLanguageValue(
+                        'config_' . $key . '_' . $label
+                    );
+                }
+                $config[$key] = $this->confSelect(
+                    $this->admin_lang->getLanguageValue('config_' . $key),
+                    $descriptions,
+                    $value[3]
+                );
+                break;
+
+            default:
+                break;
+            }
+        }
+
+        // read admin.css
+        $admin_css = '';
+        $lines = file('../plugins/FileInfo/admin.css');
+        foreach ($lines as $line_num => $line) {
+            $admin_css .= trim($line);
+        }
+
+        // add template CSS
+        $template = '<style>' . $admin_css . '</style>';
+
+
+        $template .= '
+            <div class="index-header">
+            <span>'
+                . $this->admin_lang->getLanguageValue(
+                    'index_header',
+                    self::PLUGIN_TITLE
+                )
+            . '</span>
+            <a href="' . self::PLUGIN_DOCU . '" target="_blank">
+            <img style="float:right;" src="' . self::LOGO_URL . '" />
+            </a>
+            </div>
+        </li>
+        <li class="mo-in-ul-li ui-widget-content admin-li">
+            <div class="index-subheader">'
+            . $this->admin_lang->getLanguageValue('admin_format')
+            . '</div>
+            <div style="margin-bottom:5px;">
+                {date_text}
+                {date_description}
+                <span class="admin-default">
+                    [' . $this->_confdefault['date'][0] .']
+                </span>
+        ';
+
+        $config['--template~~'] = $template;
+
+        return $config;
+    }
+
+    /**
+     * sets default backend configuration elements, if no plugin.conf.php is
+     * created yet
+     *
+     * @return Array configuration
+     */
+    function getDefaultSettings()
+    {
+        $config = array('active' => 'true');
+        foreach ($this->_confdefault as $elem => $default) {
+            $config[$elem] = $default[0];
+        }
         return $config;
     }
 
@@ -303,6 +466,45 @@ class FileInfo extends Plugin
     protected function formatFiledate($tstamp, $format = 'd.m.Y')
     {
         return date($format, $tstamp);
+    }
+
+    /**
+     * creates configuration for text fields
+     *
+     * @param string $description Label
+     * @param string $maxlength   Maximum number of characters
+     * @param string $size        Size
+     * @param string $regex       Regular expression for allowed input
+     * @param string $regex_error Wrong input error message
+     *
+     * @return Array  Configuration
+     */
+    protected function confText(
+        $description,
+        $maxlength = '',
+        $size = '',
+        $regex = '',
+        $regex_error = ''
+    ) {
+        // required properties
+        $conftext = array(
+            'type' => 'text',
+            'description' => $description,
+        );
+        // optional properties
+        if ($maxlength != '') {
+            $conftext['maxlength'] = $maxlength;
+        }
+        if ($size != '') {
+            $conftext['size'] = $size;
+        }
+        if ($regex != '') {
+            $conftext['regex'] = $regex;
+        }
+        if ($regex_error != '') {
+            $conftext['regex_error'] = $regex_error;
+        }
+        return $conftext;
     }
 
 }
