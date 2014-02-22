@@ -26,8 +26,10 @@ if (!defined('IS_ADMIN') or !IS_ADMIN) {
 
 // instantiate FileInfoAdmin class
 $FileInfoAdmin = new FileInfoAdmin($plugin);
+
 // handle post input
 $postresult = $FileInfoAdmin->checkPost();
+
 // return admin content
 return $FileInfoAdmin->getContentAdmin($postresult);
 
@@ -67,7 +69,7 @@ class FileInfoAdmin extends FileInfo
     /**
      * creates plugin administration area content
      *
-     * $param array $postresult result of post action
+     * @param array $postresult result of post action
      *
      * @return string HTML output
      */
@@ -198,7 +200,7 @@ class FileInfoAdmin extends FileInfo
                     >
                         <colgroup>
                             <col style="width:*;">
-                            <col style="width:80px;">
+                            <col style="width:60px;">
                             <col style="width:80px;">
                             <col style="width:80px;">
                             <col style="width:80px;">
