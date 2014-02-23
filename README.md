@@ -17,11 +17,14 @@ Installing a plugin manually requires FTP Access.
 
 ## Syntax
 ```{FileInfo|<file>|<template>|<linktext>}```
-Here comes the general description of the plugin tag.
+Inserts the file download link and file information elements.
 
-1. Parameter ```<file>```: Short description of parameter 1.
-2. Parameter ```<template>```: Short description of parameter 2.
-3. Parameter ```<linktext>```: Short description of parameter 2.
+1. Parameter ```<file>```: The filename like @=Category:Example.zip=@.
+2. Parameter ```<template>```: The arrangement of the elements. Possible placeholder are: ```#LINK#```, ```#TYPE#```, ```#SIZE#```, ```#DATE#``` and ```#COUNT#```.
+3. Parameter ```<linktext>```: Optional, text for download link. If this parameter is not set, filename is used.
+
+#### Example:
+```{FileInfo|@=Category:Example.zip=@|#LINK# is a #TYPE# file, has size #SIZE# and was downloaded #COUNT# times.|This file}```
 
 ## License
 This Plugin is distributed under *GNU General Public License, Version 3* (see LICENSE).
