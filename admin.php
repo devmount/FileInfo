@@ -362,6 +362,16 @@ class FileInfoAdmin extends FileInfo
             $content .= '</li></ul>';
         }
 
+        if (count($sortedfiles) == 0) {
+            $content .= '
+                <ul class="fileinfo-ul">
+                    <li class="mo-in-ul-li ui-widget-content admin-li">'
+                        . $this->admin_lang->getLanguageValue('admin_nofiles')
+                    . '</li>
+                </ul>
+            ';
+        }
+
         return $content;
     }
 

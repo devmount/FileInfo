@@ -12,6 +12,7 @@ admin_filedate          = Date
 admin_filesize          = Size
 admin_filecount         = Downloads
 admin_action            = Action
+admin_nofiles           = No files registered so far.
 icon_refresh            = Refresh page
 icon_reset              = Reset
 icon_delete             = Delete
