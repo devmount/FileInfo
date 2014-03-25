@@ -114,10 +114,8 @@ class FileInfo extends Plugin
         }
 
         // get params
-        $param_template = '';
-        $param_linktext = '';
         list($param_file, $param_template, $param_linktext)
-            = $this->makeUserParaArray($value, false, '|');
+            = array_pad($this->makeUserParaArray($value, false, '|'), 3, '');
 
         // check if cat:file construct is correct
         if (!strpos($param_file, '%3A')) {
