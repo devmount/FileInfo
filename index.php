@@ -114,6 +114,8 @@ class FileInfo extends Plugin
         }
 
         // get params
+        $param_template = '';
+        $param_linktext = '';
         list($param_file, $param_template, $param_linktext)
             = $this->makeUserParaArray($value, false, '|');
 
