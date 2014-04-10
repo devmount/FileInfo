@@ -50,7 +50,7 @@ class FileInfo extends Plugin
     // plugin information
     const PLUGIN_AUTHOR  = 'HPdesigner';
     const PLUGIN_DOCU
-        = 'http://devmount.de/Develop/Mozilo%20Plugins/FileInfo.html';
+        = 'http://devmount.de/Develop/moziloCMS/Plugins/FileInfo.html';
     const PLUGIN_TITLE   = 'FileInfo';
     const PLUGIN_VERSION = 'v0.3.2014-02-21';
     const MOZILO_VERSION = '2.0';
