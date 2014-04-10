@@ -83,23 +83,27 @@ class FileInfoAdmin extends FileInfo
         // handle postresult
         if (isset($postresult['reset'])) {
             if ($postresult['reset']) {
-                $msg = $this->throwSuccess(
-                    $this->admin_lang->getLanguageValue('msg_success_reset')
+                $msg = $this->throwMessage(
+                    $this->admin_lang->getLanguageValue('msg_success_reset'),
+                    'SUCCESS'
                 );
             } else {
-                $msg = $this->throwError(
-                    $this->admin_lang->getLanguageValue('msg_error_reset')
+                $msg = $this->throwMessage(
+                    $this->admin_lang->getLanguageValue('msg_error_reset'),
+                    'ERROR'
                 );
             }
         }
         if (isset($postresult['delete'])) {
             if ($postresult['delete']) {
-                $msg = $this->throwSuccess(
-                    $this->admin_lang->getLanguageValue('msg_success_delete')
+                $msg = $this->throwMessage(
+                    $this->admin_lang->getLanguageValue('msg_success_delete'),
+                    'SUCCESS'
                 );
             } else {
-                $msg = $this->throwError(
-                    $this->admin_lang->getLanguageValue('msg_error_delete')
+                $msg = $this->throwMessage(
+                    $this->admin_lang->getLanguageValue('msg_error_delete'),
+                    'ERROR'
                 );
             }
         }
@@ -489,6 +493,22 @@ class FileInfoAdmin extends FileInfo
     protected function deleteCount($catfile)
     {
         return Database::deleteFile($this->_self_dir . 'data/' . $catfile . '.php');
+    }
+
+    /**
+     * throws styled message
+     *
+     * @param string $type Type of message ('ERROR', 'SUCCESS')
+     * @param string $text Content of message
+     *
+     * @return string HTML content
+     */
+    protected function throwMessage($text, $type)
+    {
+        return '<div class="' . self::PLUGIN_TITLE . ucfirst(strtolower($type)) . '">'
+            . '<div>' . $this->admin_lang->getLanguageValue(strtolower($type)) . '</div>'
+            . '<span>' . $text. '</span>'
+            . '</div>';
     }
 }
 

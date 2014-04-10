@@ -45,7 +45,7 @@ class FileInfo extends Plugin
 {
     // language
     public $admin_lang;
-    private $_cms_lang;
+    public $cms_lang;
 
     // plugin information
     const PLUGIN_AUTHOR  = 'HPdesigner';
@@ -98,7 +98,7 @@ class FileInfo extends Plugin
         global $syntax;
         global $CatPage;
 
-        $this->_cms_lang = new Language(
+        $this->cms_lang = new Language(
             $this->PLUGIN_SELF_DIR
             . 'lang/cms_language_'
             . $CMS_CONF->get('cmslanguage')
@@ -119,11 +119,12 @@ class FileInfo extends Plugin
 
         // check if cat:file construct is correct
         if (!strpos($param_file, '%3A')) {
-            return $this->throwError(
-                $this->_cms_lang->getLanguageValue(
+            return $this->throwMessage(
+                $this->cms_lang->getLanguageValue(
                     'error_invalid_input',
                     urldecode($param_file)
-                )
+                ),
+                'ERROR'
             );
         }
 
@@ -132,12 +133,13 @@ class FileInfo extends Plugin
 
         // check if file exists
         if (!$CatPage->exists_File($cat, $file)) {
-            return $this->throwError(
-                $this->_cms_lang->getLanguageValue(
+            return $this->throwMessage(
+                $this->cms_lang->getLanguageValue(
                     'error_invalid_file',
                     urldecode($file),
                     urldecode($cat)
-                )
+                ),
+                'ERROR'
             );
         }
 
@@ -338,6 +340,7 @@ class FileInfo extends Plugin
     function getInfo()
     {
         global $ADMIN_CONF;
+
         $this->admin_lang = new Language(
             $this->PLUGIN_SELF_DIR
             . 'lang/admin_language_'
@@ -424,37 +427,23 @@ class FileInfo extends Plugin
     }
 
     /**
-     * throws styled error message
+     * throws styled message
      *
-     * @param string $text Content of error message
+     * @param string $type Type of message ('ERROR', 'SUCCESS')
+     * @param string $text Content of message
      *
      * @return string HTML content
      */
-    protected function throwError($text)
+    protected function throwMessage($text, $type)
     {
-        return '<div class="' . self::PLUGIN_TITLE . 'Error">'
-            . '<div>' . $this->admin_lang->getLanguageValue('error') . '</div>'
+        return '<div class="' . self::PLUGIN_TITLE . ucfirst(strtolower($type)) . '">'
+            . '<div>' . $this->cms_lang->getLanguageValue(strtolower($type)) . '</div>'
             . '<span>' . $text. '</span>'
             . '</div>';
     }
 
     /**
-     * throws styled success message
-     *
-     * @param string $text Content of success message
-     *
-     * @return string HTML content
-     */
-    protected function throwSuccess($text)
-    {
-        return '<div class="' . self::PLUGIN_TITLE . 'Success">'
-            . '<div>' . $this->admin_lang->getLanguageValue('success') . '</div>'
-            . '<span>' . $text. '</span>'
-            . '</div>';
-    }
-
-    /**
-     * returns filesize with unit, like 5,32 M
+     * returns filesize with unit, like 5.32 M
      *
      * @param integer $bytes    number of bytes
      * @param integer $decimals number of decimals
