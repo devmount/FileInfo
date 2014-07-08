@@ -10,13 +10,13 @@
  *
  * @category PHP
  * @package  PHP_MoziloPlugins
- * @author   HPdesigner <kontakt@devmount.de>
- * @license  GPL v3
+ * @author   HPdesigner <mail@devmount.de>
+ * @license  GPL v3+
  * @version  GIT: v0.3.2014-02-21
  * @link     https://github.com/devmount/FileInfo
- * @link     http://devmount.de/Develop/Mozilo%20Plugins/FileInfo.html
- * @see      Many are the plans in a person’s heart,
- *           but it is the Lord’s purpose that prevails.
+ * @link     http://devmount.de/Develop/moziloCMS/Plugins/FileInfo.html
+ * @see      Many are the plans in a person’s heart, but it is the Lord’s purpose
+ *           that prevails.
  *            - The Bible
  *
  * Plugin created by DEVMOUNT
@@ -37,8 +37,8 @@ require_once "database.php";
  *
  * @category PHP
  * @package  PHP_MoziloPlugins
- * @author   HPdesigner <kontakt@devmount.de>
- * @license  GPL v3
+ * @author   HPdesigner <mail@devmount.de>
+ * @license  GPL v3+
  * @link     https://github.com/devmount/FileInfo
  */
 class FileInfo extends Plugin
