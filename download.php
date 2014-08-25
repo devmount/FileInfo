@@ -9,7 +9,7 @@
  *
  * @category PHP
  * @package  PHP_MoziloPlugins
- * @author   HPdesigner <kontakt@devmount.de>
+ * @author   DEVMOUNT <mail@devmount.de>
  * @license  GPL v3
  * @link     https://github.com/devmount/FileInfo
  *

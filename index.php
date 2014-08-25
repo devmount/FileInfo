@@ -10,7 +10,7 @@
  *
  * @category PHP
  * @package  PHP_MoziloPlugins
- * @author   HPdesigner <mail@devmount.de>
+ * @author   DEVMOUNT <mail@devmount.de>
  * @license  GPL v3+
  * @version  GIT: v0.3.2014-02-21
  * @link     https://github.com/devmount/FileInfo
@@ -37,7 +37,7 @@ require_once "database.php";
  *
  * @category PHP
  * @package  PHP_MoziloPlugins
- * @author   HPdesigner <mail@devmount.de>
+ * @author   DEVMOUNT <mail@devmount.de>
  * @license  GPL v3+
  * @link     https://github.com/devmount/FileInfo
  */
@@ -48,12 +48,13 @@ class FileInfo extends Plugin
     public $cms_lang;
 
     // plugin information
-    const PLUGIN_AUTHOR  = 'HPdesigner';
-    const PLUGIN_DOCU
-        = 'http://devmount.de/Develop/moziloCMS/Plugins/FileInfo.html';
+    const PLUGIN_AUTHOR  = 'DEVMOUNT';
     const PLUGIN_TITLE   = 'FileInfo';
     const PLUGIN_VERSION = 'v0.3.2014-02-21';
     const MOZILO_VERSION = '2.0';
+    const PLUGIN_DOCU
+        = 'http://devmount.de/Develop/moziloCMS/Plugins/FileInfo.html';
+
     private $_plugin_tags = array(
         'tag' => '{FileInfo|<file>|<template>|<linktext>}',
     );
@@ -363,7 +364,11 @@ class FileInfo extends Plugin
                 implode(', ', $this->_marker)
             ),
             self::PLUGIN_AUTHOR,
-            self::PLUGIN_DOCU,
+            array(
+                self::PLUGIN_DOCU,
+                self::PLUGIN_TITLE . ' '
+                . $this->admin_lang->getLanguageValue('on_devmount')
+            ),
             $tags
         );
 
