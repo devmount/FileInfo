@@ -10,6 +10,7 @@
     margin: 2px 0;
     border: 1px solid #f44;
     background-color: #fee;
+    font-size: 12px;
 }
 .FileInfoError div {
     display: table-cell;
