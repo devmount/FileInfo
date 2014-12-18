@@ -24,15 +24,6 @@ if (!defined('IS_ADMIN') or !IS_ADMIN) {
     die();
 }
 
-// instantiate FileInfoAdmin class
-$FileInfoAdmin = new FileInfoAdmin($plugin);
-
-// handle post input
-$postresult = $FileInfoAdmin->checkPost();
-
-// return admin content
-return $FileInfoAdmin->getContentAdmin($postresult);
-
 /**
  * FileInfoAdmin Class
  *
@@ -511,5 +502,15 @@ class FileInfoAdmin extends FileInfo
             . '</div>';
     }
 }
+
+// instantiate FileInfoAdmin class
+$FileInfoAdmin = new FileInfoAdmin($plugin);
+
+// handle post input
+$postresult = $FileInfoAdmin->checkPost();
+
+// return admin content
+return $FileInfoAdmin->getContentAdmin($postresult);
+
 
 ?>
