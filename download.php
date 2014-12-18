@@ -33,7 +33,10 @@ if ($_POST['submit'] != '') {
     Database::saveArray('data/' . $catfile . '.php', $count);
 
     // redirect to file to be downloaded
-    header('Location: ' . $return_url);
+    header('Content-Type: application/octet-stream');
+    header("Content-Transfer-Encoding: Binary"); 
+    header("Content-disposition: attachment; filename=\"" . basename($return_url) . "\""); 
+    readfile($return_url);
 }
 
 ?>
