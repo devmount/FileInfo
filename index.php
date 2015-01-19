@@ -146,6 +146,8 @@ class FileInfo extends Plugin
 
         // get file source url
         $src = $CatPage->get_srcFile($cat, $file);
+        $src = '/' . substr($src, strpos($src, 'kategorien'));
+
         // get file path url
         $url = $CatPage->get_pfadFile($cat, $file);
 
