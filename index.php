@@ -362,7 +362,7 @@ class FileInfo extends Plugin
             self::MOZILO_VERSION,
             $this->admin_lang->getLanguageValue(
                 'description',
-                htmlspecialchars($this->_plugin_tags['tag']),
+                htmlspecialchars($this->_plugin_tags['tag'], ENT_COMPAT, 'UTF-8'),
                 implode(', ', $this->_marker)
             ),
             self::PLUGIN_AUTHOR,
