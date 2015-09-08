@@ -13,7 +13,7 @@
  * @author   DEVMOUNT <mail@devmount.de>
  * @license  GPL v3+
  * @version  GIT: v0.4.2014-12-21
- * @link     https://github.com/devmount/FileInfo
+ * @link     https://github.com/devmount-mozilo/FileInfo
  * @link     http://devmount.de/Develop/moziloCMS/Plugins/FileInfo.html
  * @see      Many are the plans in a person’s heart, but it is the Lord’s purpose
  *           that prevails.
@@ -39,7 +39,7 @@ require_once "database.php";
  * @package  PHP_MoziloPlugins
  * @author   DEVMOUNT <mail@devmount.de>
  * @license  GPL v3+
- * @link     https://github.com/devmount/FileInfo
+ * @link     https://github.com/devmount-mozilo/FileInfo
  */
 class FileInfo extends Plugin
 {
