@@ -16,7 +16,7 @@ Installing a plugin manually requires FTP Access.
 - Go to the backend tab *Plugins* and activate the now listed new FileInfo plugin
 
 ## Syntax
-```{FileInfo|<file>|<template>|<linktext>}```
+    {FileInfo|<file>|<template>|<linktext>}
 Inserts the file download link and file information elements.
 
 1. Parameter ```<file>```: The filename like @=Category:Example.zip=@.
@@ -24,11 +24,11 @@ Inserts the file download link and file information elements.
 3. Parameter ```<linktext>```: Optional, text for download link. If this parameter is not set, filename is used.
 
 #### Example:
-```{FileInfo|@=Category:Example.zip=@|#LINK# is a #TYPE# file, has size #SIZE# and was downloaded #COUNT# times.|This file}```
+    {FileInfo|@=Category:Example.zip=@|#LINK# is a #TYPE# file, has size #SIZE# and was downloaded #COUNT# times.|This file}
 
 ## License
 This Plugin is distributed under *GNU General Public License, Version 3* (see LICENSE) or, at your choice, any further version.
 
 ## Documentation
-A detailed documentation and demo can be found on DEVMOUNT's website:
-http://devmount.de/Develop/moziloCMS/Plugins/FileInfo.html
+A detailed documentation and demo can be found here:
+http://t.devmount.de/Develop/moziloCMS/Plugins/FileInfo.html
