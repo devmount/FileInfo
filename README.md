@@ -31,4 +31,4 @@ This Plugin is distributed under *GNU General Public License, Version 3* (see LI
 
 ## Documentation
 A detailed documentation and demo can be found here:
-http://t.devmount.de/Develop/moziloCMS/Plugins/FileInfo.html
+https://github.com/devmount-mozilo/FileInfo/wiki/Dokumentation [german]
