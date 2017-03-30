@@ -13,8 +13,7 @@
  * @author   DEVMOUNT <mail@devmount.de>
  * @license  GPL v3+
  * @version  GIT: v0.4.2014-12-21
- * @link     https://github.com/devmount-mozilo/FileInfo
- * @link     http://devmount.de/Develop/moziloCMS/Plugins/FileInfo.html
+ * @link     https://github.com/devmount-mozilo/FileInfo/wiki/Dokumentation
  * @see      Many are the plans in a person’s heart, but it is the Lord’s purpose
  *           that prevails.
  *            - The Bible
@@ -53,7 +52,7 @@ class FileInfo extends Plugin
     const PLUGIN_VERSION = 'v0.4.2014-12-21';
     const MOZILO_VERSION = '2.0';
     const PLUGIN_DOCU
-        = 'http://devmount.de/Develop/moziloCMS/Plugins/FileInfo.html';
+        = 'https://github.com/devmount-mozilo/FileInfo/wiki/Dokumentation';
 
     private $_plugin_tags = array(
         'tag' => '{FileInfo|<file>|<template>|<linktext>}',
