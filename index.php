@@ -1,4 +1,4 @@
-<?php
+<?php if(!defined('IS_CMS')) die();
 
 /**
  * moziloCMS Plugin: FileInfo
@@ -98,6 +98,11 @@ class FileInfo extends Plugin
         global $syntax;
         global $CatPage;
 
+        if($value == "plugin_first" and getRequestValue('downloadable_file_id', 'post')  and getRequestValue('submit', 'post')) {
+            require_once __DIR__ . '/download.php';
+            // exit
+        }
+
         $this->cms_lang = new Language(
             $this->PLUGIN_SELF_DIR
             . 'lang/cms_language_'
@@ -143,17 +148,13 @@ class FileInfo extends Plugin
             );
         }
 
-        // get file source url
-        $src = $CatPage->get_srcFile($cat, $file);
-        $src = '/' . substr($src, strpos($src, 'kategorien'));
-
         // get file path url
         $url = $CatPage->get_pfadFile($cat, $file);
 
         // set type contents
         $types = array(
             // #LINK#
-            $this->getLink($src, $param_file, $param_linktext),
+            $this->getLink($param_file, $param_linktext),
             // #TYPE#
             $this->getType($file),
             // #SIZE#
@@ -188,6 +189,10 @@ class FileInfo extends Plugin
     {
         global $CatPage;
 
+        if(IS_ADMIN and $this->settings->get("plugin_first") !== "true") {
+            $this->settings->set("plugin_first","true");
+        }
+        
         $config = array();
 
         // create button to administration area
@@ -379,23 +384,21 @@ class FileInfo extends Plugin
     /**
      * builds formula with download link
      *
-     * @param string $src      url of download file
-     * @param string $catfile  url coded cat:filename
+     * @param string $downloadable_file_id  id of downloadable file
      * @param string $linktext optional text for download link
      *
      * @return html formula
      */
-    protected function getLink($src, $catfile, $linktext = '')
+    protected function getLink($downloadable_file_id, $linktext = '')
     {
-        list($cat, $file) = explode('%3A', $catfile);
+        list($cat, $file) = explode('%3A', $downloadable_file_id);
         $text = ($linktext == '') ? urldecode($file) : $linktext;
         return '<form
                     class="FileInfoDownload"
-                    action="' . $this->PLUGIN_SELF_URL . 'download.php"
+                    action=""
                     method="post"
                 >
-                    <input name="url" type="hidden" value="' . $src . '" />
-                    <input name="catfile" type="hidden" value="' . $catfile . '" />
+                    <input name="downloadable_file_id" type="hidden" value="' . $downloadable_file_id . '" />
                     <input name="submit" type="submit" value="'. $text . '"/>
                 </form>';
     }
