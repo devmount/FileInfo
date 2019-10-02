@@ -1,4 +1,4 @@
-<?php
+<?php if(!defined('IS_CMS')) die();
 
 /**
  * FileInfo: download.php
@@ -20,13 +20,43 @@
 
 require_once "database.php";
 
+$downloadableFiles = call_user_func(function(){
+    global $CatPage;
+    
+    $dir = __DIR__.'/data/';
+    $rtn = [];
+    
+    $databaseFiles = array_filter(scandir($dir), function($value) use ($dir) {
+        return is_file($dir . $value);
+    });
+
+    foreach($databaseFiles as $databaseFile) {
+        $slug = basename($databaseFile, '.php');
+        
+        $parts = $CatPage->split_CatPage_fromSyntax($slug, TRUE);
+                    
+        if($CatPage->exists_File($parts[0], $parts[1])) {
+
+            $id = $slug;
+
+            $rtn[$id] = $CatPage->get_pfadFile( $parts[0] , $parts[1]);
+        }            
+    }
+
+    return $rtn;
+});
+
 if ($_POST['submit'] != '') {
     // get formula data
-    $file = filter_var($_POST['url'], FILTER_SANITIZE_URL);
-    $catfile = filter_var($_POST['catfile'], FILTER_SANITIZE_URL);
-    $dbfile = 'data/' . $catfile . '.php';
+    $downloadableFileID = $_POST['downloadable_file_id'];
 
-    $file = urldecode('../..' . $file);
+    if(!array_key_exists($downloadableFileID, $downloadableFiles)) {
+        die('File not found');
+    }
+
+    $dbfile = __DIR__ . '/data/' . $downloadableFileID . '.php';
+
+    $file = $downloadableFiles[$downloadableFileID];
     $pathinfo = pathinfo($file);
     $filename  = $pathinfo['basename'];
     $file_ext   = $pathinfo['extension'];
